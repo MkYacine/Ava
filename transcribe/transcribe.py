@@ -50,11 +50,10 @@ def transcribe_gcs(gcs_uri, credentials):
 
     # Configure the audio file from GCS URI
     audio = speech.RecognitionAudio(uri=gcs_uri)
-    sample_rate = audio.frame_rate
 
     config = speech.RecognitionConfig(
       encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-      sample_rate_hertz=sample_rate,
+      sample_rate_hertz=32000,
       language_code="fr-FR",
     )
     
@@ -75,11 +74,10 @@ def transcribe_gcs_large(gcs_uri, credentials):
 
     # Configure the audio file from GCS URI
     audio = speech.RecognitionAudio(uri=gcs_uri)
-    sample_rate = audio.frame_rate
 
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=sample_rate,
+        sample_rate_hertz=32000,
         language_code="fr-FR",
     )
 
