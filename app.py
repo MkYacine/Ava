@@ -2,14 +2,16 @@ import streamlit as st
 from transcribe.transcribe import *
 from google.oauth2 import service_account
 import json
-from twilio_handlers import *
+from twilio_handlers import twilio_client, credentials
 import os
 from dotenv import load_dotenv
+import requests
+from requests.auth import HTTPBasicAuth
 
-# Load environment variables from .env file
+# Chargement des variables d'environnement
 load_dotenv()
 
-# Load Google Cloud credentials from environment variables
+# Configuration des credentials Google Cloud
 credentials_dict = {
     "type": os.getenv("GOOGLE_TYPE"),
     "project_id": os.getenv("GOOGLE_PROJECT_ID"),
@@ -25,53 +27,79 @@ credentials_dict = {
 
 credentials = service_account.Credentials.from_service_account_info(credentials_dict)
 
-# Streamlit App
-st.title("Speech-to-Text Transcription")
+# Application Streamlit
+st.title("Transcription Speech-to-Text et Gestion des Appels")
 
-# Twilio call section
-st.header("Make a call and transcribe")
-user_phone = st.text_input("Enter your phone number (e.g., +1234567890)")
-recipient_phone = st.text_input("Enter recipient's phone number (e.g., +1234567890)")
+# Section d'appel Twilio
+st.header("Passer un appel et transcrire")
+forward_number = st.text_input("Entrez le numéro intermédiaire (ex: +1234567890)")
+to_number = st.text_input("Entrez le numéro final du destinataire (ex: +1234567890)")
 
-if st.button("Make Call"):
-    if user_phone and recipient_phone:
+if st.button("Passer un appel"):
+    if forward_number and to_number:
         try:
-            call = twilio_client.calls.create(
-                to=user_phone,
-                from_=os.getenv('TWILIO_PHONE_NUMBER'),
-                record=True,
-                recording_channels='dual',
-                recording_status_callback=f"{os.getenv('NGROK_URL')}/recording_callback",
-                url=f"{os.getenv('NGROK_URL')}/twiml?recipient={recipient_phone}"
-            )
-            st.success(f"Call initiated. SID: {call.sid}")
+            response = requests.post(f"{os.getenv('NGROK_URL')}/make_call", 
+                                     json={"forward_number": forward_number, "to_number": to_number})
+            if response.status_code == 200:
+                call_data = response.json()
+                st.success(f"Appel initié. SID: {call_data['sid']}")
+            else:
+                st.error(f"Erreur lors de l'appel : {response.text}")
         except Exception as e:
-            st.error(f"Error making call: {str(e)}")
+            st.error(f"Erreur lors de l'appel : {str(e)}")
     else:
-        st.warning("Please enter both phone numbers")
+        st.warning("Veuillez entrer les deux numéros de téléphone")
+# Section pour obtenir les enregistrements
+# Section pour obtenir les enregistrements
+st.header("Obtenir les derniers enregistrements")
+if st.button("Afficher les 5 derniers enregistrements"):
+    recordings = twilio_client.recordings.list(limit=5)
+    if not recordings:
+        st.info("Aucun enregistrement trouvé.")
+    else:
+        for rec in recordings:
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.write(f"SID: {rec.sid}")
+            with col2:
+                st.write(f"Date: {rec.date_created.strftime('%Y-%m-%d %H:%M:%S')}")
+            with col3:
+                stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{rec.sid}.wav?RequestedChannels=2"
+                response = requests.get(stereo_url, auth=HTTPBasicAuth(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN')))
+                
+                if response.status_code == 200 and len(response.content) > 0:
+                    st.download_button(
+                        label=f"Télécharger {rec.sid}",
+                        data=response.content,
+                        file_name=f"recording_{rec.sid}_stereo.wav",
+                        mime="audio/wav",
+                        key=f"download_button_{rec.sid}"
+                    )
+                else:
+                    st.error(f"Erreur lors du chargement de l'enregistrement {rec.sid}")
 
-# File upload section
-st.header("Upload an audio file")
-uploaded_file = st.file_uploader("Choose an audio file", type=["mp3", "wav"])
+# Section d'upload de fichier
+st.header("Uploader un fichier audio")
+uploaded_file = st.file_uploader("Choisissez un fichier audio", type=["mp3", "wav"])
 
 if uploaded_file is not None:
-    # Save the uploaded file to disk
+    # Sauvegarde du fichier uploadé sur le disque
     with open(uploaded_file.name, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    # Transcribe the uploaded audio file
-    st.write("Transcribing the uploaded file...")
+    # Transcription du fichier audio uploadé
+    st.write("Transcription du fichier en cours...")
     transcript = transcribe_local(uploaded_file.name, credentials)
-    st.subheader("Transcript:")
+    st.subheader("Transcription:")
     st.text(transcript)
 
-# GCS URL section
-st.header("Enter a GCS URL")
-gcs_url = st.text_input("GCS URL")
+# Section URL GCS
+st.header("Entrer une URL GCS")
+gcs_url = st.text_input("URL GCS")
 
 if gcs_url:
-    # Transcribe the audio file from GCS URL
-    st.write("Transcribing the audio from GCS URL...")
+    # Transcription du fichier audio depuis l'URL GCS
+    st.write("Transcription de l'audio depuis l'URL GCS en cours...")
     transcript = transcribe_gcs(gcs_url, credentials)
-    st.subheader("Transcript:")
+    st.subheader("Transcription:")
     st.text(transcript)
