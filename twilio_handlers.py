@@ -1,13 +1,19 @@
-from flask import Flask, request
+from flask import Flask, request,jsonify
 from twilio.twiml.voice_response import VoiceResponse
 from twilio.rest import Client
 from dotenv import load_dotenv
 import os
+from twilio.twiml.voice_response import VoiceResponse, Dial
+from flask import send_file
 from google.cloud import storage
 from google.oauth2 import service_account
 from transcribe.transcribe import transcribe_gcs_large
 import uuid
 import logging
+import requests
+from requests.auth import HTTPBasicAuth
+import io
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -36,16 +42,15 @@ credentials_dict = {
 }
 
 credentials = service_account.Credentials.from_service_account_info(credentials_dict)
-
 @app.route("/twiml", methods=['POST'])
 def twiml():
-    logger.info("Received request to /twiml endpoint")
+    logger.info("Requête reçue sur /twiml")
     response = VoiceResponse()
     recipient = request.args.get('recipient')
     
-    logger.info(f"Recipient number: {recipient}")
+    logger.info(f"Numéro du destinataire : {recipient}")
     
-    response.say("This call will be recorded for transcription. Connecting you now.")
+    response.say("Cet appel sera enregistré pour transcription. Connexion en cours.")
     
     dial = response.dial(
         record='record-from-answer-dual', 
@@ -55,14 +60,81 @@ def twiml():
     )
     dial.number(recipient)
     
-    logger.info("TwiML response generated")
+    logger.info("Réponse TwiML générée")
     return str(response)
 
 @app.route("/call_complete", methods=['POST'])
 def call_complete():
-    logger.info("Call completed")
+    logger.info("Appel terminé")
     return "", 200
+@app.route('/make_call', methods=['POST'])
+def make_call():
+    logger.info("Requête /make_call reçue")
+    try:
+        from_number = os.getenv('TWILIO_PHONE_NUMBER')
+        forward_number = request.json.get('forward_number')
+        to_number = request.json.get('to_number')
+        
+        logger.info("Tentative de création d'appel...")
+        call = twilio_client.calls.create(
+            url=f"{os.getenv('NGROK_URL')}/handle_call?to={to_number}&forward={forward_number}",
+            to=forward_number,
+            from_=from_number
+        )
+        logger.info(f"Appel créé avec succès : {call.sid}")
+        return jsonify({"message": "Appel initié", "sid": call.sid})
+    except Exception as e:
+        logger.error(f"Erreur détaillée : {type(e).__name__}, {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
+@app.route('/handle_call', methods=['POST'])
+def handle_call():
+    to_number = request.args.get('to')
+    forward_number = request.args.get('forward')
+    response = VoiceResponse()
+    response.say("Cet appel est en cours de transfert. Veuillez patienter.")
+    dial = Dial(record='record-from-answer', recording_channels='dual', caller_id=forward_number)
+    dial.number(to_number, codec='opus')
+    response.append(dial)
+    
+    return str(response)
+@app.route('/get_recordings', methods=['GET'])
+def get_recordings():
+    recordings = twilio_client.recordings.list()
+    formatted_recordings = [
+        {
+            "sid": rec.sid,
+            "date": rec.date_created.strftime('%Y-%m-%d %H:%M:%S'),
+            "media_url": rec.media_url
+        }
+        for rec in recordings
+    ]
+    return jsonify({"recordings": formatted_recordings})
+
+@app.route('/download_recording/<sid>', methods=['GET'])
+def download_recording(sid):
+    try:
+        recording = twilio_client.recordings(sid).fetch()
+        stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Recordings/{sid}.wav?RequestedChannels=2"
+        response = requests.get(stereo_url, auth=HTTPBasicAuth(account_sid, auth_token))
+        
+        if response.status_code != 200:
+            logger.error(f"Erreur lors du téléchargement : {response.status_code}")
+            logger.error(f"Contenu de la réponse : {response.text}")
+            return f"Erreur lors du téléchargement : {response.status_code}", 400
+        
+        if len(response.content) == 0:
+            return "L'enregistrement est vide", 404
+        
+        return send_file(
+            io.BytesIO(response.content),
+            mimetype='audio/wav',
+            download_name=f"recording_{sid}_stereo.wav",
+            as_attachment=True
+        )
+    except Exception as e:
+        logger.error(f"Erreur détaillée : {type(e).__name__}, {str(e)}")
+        return f"Erreur : {str(e)}", 500
 @app.route("/recording_callback", methods=['POST'])
 def recording_callback():
     logger.info("Received recording callback")
