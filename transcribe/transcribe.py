@@ -3,19 +3,37 @@ from pydub import AudioSegment
 import os
 
 
-def transcribe_local(path, credentials):
-    # Convert MP3 to WAV, ensure it is mono, and trim to the first 30 seconds
-    audio = AudioSegment.from_file(path)
-    audio = audio.set_channels(1)  # Ensure the audio is mono
-    audio = audio[:30000]  # Trim to the first 30 seconds (30000 ms)
-    output_path = path.rsplit('.', 1)[0] + '.wav'
+def split_stereo(input_path, output_path_left, output_path_right):
+    stereo_audio = AudioSegment.from_wav(input_path)
+    left_channel = stereo_audio.split_to_mono()[0]
+    right_channel = stereo_audio.split_to_mono()[1]
+    
+    left_channel.export(output_path_left, format="wav")
+    right_channel.export(output_path_right, format="wav")
+
+
+def transcribe_local(path, credentials, crop_duration=None, channel=None):
+    # Load the audio file
+    audio = AudioSegment.from_wav(path)
+    
+    # Crop the audio if crop_duration is specified
+    if crop_duration:
+        audio = audio[:crop_duration * 1000]  # Convert seconds to milliseconds
+    
+    # If channel is specified, extract that channel
+    if channel is not None:
+        audio = audio.split_to_mono()[channel]
+    
+    # Ensure the audio is mono
+    audio = audio.set_channels(1)
+    
+    output_path = path.rsplit('.', 1)[0] + '_processed.wav'
     audio.export(output_path, format="wav")
 
-    # Read the trimmed WAV file content and sample rate
+    # Read the processed WAV file content and sample rate
     with open(output_path, "rb") as audio_file:
         content = audio_file.read()
     
-    audio = AudioSegment.from_file(output_path)
     sample_rate = audio.frame_rate
 
     # Instantiates a client
@@ -33,15 +51,14 @@ def transcribe_local(path, credentials):
     # Detects speech in the audio file
     response = client.recognize(config=config, audio=audio)
 
-    # Collect the transcript and write to a text file
+    # Collect the transcript
     transcript = ""
     for result in response.results:
         transcript += result.alternatives[0].transcript + "\n"
 
-    # Write the transcript to a text file
-    #transcript_path = path.rsplit('.', 1)[0] + '_transcript.txt'
-    #with open(transcript_path, "w", encoding="utf-8") as transcript_file:
-    #    transcript_file.write(transcript)
+    # Clean up the temporary file
+    os.remove(output_path)
+
     return transcript
 
 def transcribe_gcs(gcs_uri, credentials):
