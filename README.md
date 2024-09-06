@@ -1,5 +1,12 @@
 # Excalibur
 
+## To do
+- Fix sound issue when calls are made from the VM
+- Buy and set up a domain
+- Once a domain is setup, setup SSL to secure the connection and enable HTTPS
+- Clean up the virtual machine and remove any unused dependencies (use new requirements.txt)
+- Write unit tests and setup CI/CD jobs
+
 ## Setting up the ngrok server
 
 ### First-time setup
