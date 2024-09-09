@@ -2,7 +2,7 @@
 
 ## To do
 - Write unit tests and setup CI/CD jobs
-
+- Add password to access the streamlit app
 ## Setting up the ngrok server
 
 ### First-time setup
