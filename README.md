@@ -1,4 +1,4 @@
-# Excalibur
+# Ava
 
 ## To do
 - Write unit tests and setup CI/CD jobs
