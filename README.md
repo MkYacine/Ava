@@ -2,7 +2,10 @@
 
 ## To do
 - Write unit tests and setup CI/CD jobs
-- Add password to access the streamlit app
+- Timing of the audio for the final txt final to be transcribed
+- Extract mon parcours financier form from pdf to txt
+- prompt engineer ( hunh ? )
+- fill  out the final pdf output  
 ## Setting up the ngrok server
 
 ### First-time setup
