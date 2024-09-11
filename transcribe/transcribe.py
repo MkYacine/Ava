@@ -11,7 +11,6 @@ def split_stereo(input_path, output_path_left, output_path_right):
     left_channel.export(output_path_left, format="wav")
     right_channel.export(output_path_right, format="wav")
 
-
 def transcribe_local(path, credentials, crop_duration=None, channel=None):
     # Load the audio file
     audio = AudioSegment.from_wav(path)
@@ -27,39 +26,55 @@ def transcribe_local(path, credentials, crop_duration=None, channel=None):
     # Ensure the audio is mono
     audio = audio.set_channels(1)
     
-    output_path = path.rsplit('.', 1)[0] + '_processed.wav'
-    audio.export(output_path, format="wav")
-
-    # Read the processed WAV file content and sample rate
-    with open(output_path, "rb") as audio_file:
-        content = audio_file.read()
+    # Diviser l'audio en segments de 30 secondes (ou moins)
+    segment_duration = 30 * 1000  # 30 secondes en millisecondes
+    max_segment_size = 10 * 1024 * 1024  # 10 Mo en octets
+    transcripts = []
     
-    sample_rate = audio.frame_rate
+    for i in range(0, len(audio), segment_duration):
+        segment = audio[i:i + segment_duration]
+        output_path = f"temp_segment_{i // segment_duration}.wav"
+        segment.export(output_path, format="wav")
 
-    # Instantiates a client
-    client = speech.SpeechClient(credentials=credentials)
+        # Lire le contenu du fichier WAV traité
+        with open(output_path, "rb") as audio_file:
+            content = audio_file.read()
+        
+        # Vérifier la taille du contenu
+        if len(content) > max_segment_size:  # Si le segment dépasse 10 Mo
+            raise ValueError("Le segment audio dépasse la limite de 10 Mo.")
+        
+        sample_rate = segment.frame_rate
 
-    # Configure the audio file
-    audio = speech.RecognitionAudio(content=content)
+        # Instantiates a client
+        client = speech.SpeechClient(credentials=credentials)
 
-    config = speech.RecognitionConfig(
-      encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-      sample_rate_hertz=sample_rate,
-      language_code="fr-FR",
-    )
-    
-    # Detects speech in the audio file
-    response = client.recognize(config=config, audio=audio)
+        # Configure the audio file
+        audio_content = speech.RecognitionAudio(content=content)  # Correction ici
 
-    # Collect the transcript
-    transcript = ""
-    for result in response.results:
-        transcript += result.alternatives[0].transcript + "\n"
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+            sample_rate_hertz=sample_rate,
+            language_code="fr-FR",
+        )
+        
+        # Utiliser long_running_recognize pour chaque segment
+        operation = client.long_running_recognize(config=config, audio=audio_content)  # Correction ici
+        response = operation.result(timeout=600)
 
-    # Clean up the temporary file
-    os.remove(output_path)
+        # Collect the transcript for the segment
+        segment_transcript = ""
+        for result in response.results:
+            segment_transcript += result.alternatives[0].transcript + "\n"
+        
+        transcripts.append(segment_transcript)
 
-    return transcript
+        # Clean up the temporary file
+        os.remove(output_path)
+
+    # Combine all transcripts
+    return "\n".join(transcripts)
+
 
 def transcribe_gcs(gcs_uri, credentials):
     # Instantiates a client
@@ -94,10 +109,13 @@ def transcribe_gcs_large(gcs_uri, credentials):
 
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=32000,
-        language_code="fr-FR",
+        sample_rate_hertz=8000,
+        language_code="fr-CA",
+        use_enhanced=True,
+        model="phone_call",
+        enable_automatic_punctuation=True,
+        speech_contexts=[speech.SpeechContext(phrases=["adresse ", "rue","date de naissance","travail","dettes"])]
     )
-
     # Asynchronously detect speech in the audio file
     operation = client.long_running_recognize(config=config, audio=audio)
 

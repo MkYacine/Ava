@@ -127,7 +127,7 @@ if check_password():
     if gcs_url:
         # Transcription du fichier audio depuis l'URL GCS
         st.write("Transcription de l'audio depuis l'URL GCS en cours...")
-        transcript = transcribe_gcs(gcs_url, credentials)
+        transcript = transcribe_gcs_large(gcs_url, credentials)  # Utiliser transcribe_gcs_large
         st.subheader("Transcription:")
         st.text(transcript)
 
@@ -153,38 +153,42 @@ if check_password():
         if crop_option == "Crop audio":
             crop_duration = st.number_input("Enter crop duration in seconds:", min_value=1, value=30)
 
+    latest_recording = get_latest_recording()
+
+    if latest_recording:
+        st.write(f"Latest recording SID: {latest_recording.sid}")
+        st.write(f"Date: {latest_recording.date_created.strftime('%Y-%m-%d %H:%M:%S')}")
+
         if st.button("Transcribe Call"):
-            # Download the recording
+            # Télécharger l'enregistrement
             stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{latest_recording.sid}.wav?RequestedChannels=2"
             response = requests.get(stereo_url, auth=HTTPBasicAuth(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN')))
 
             if response.status_code == 200:
-                # Save the audio file temporarily
+                # Sauvegarder l'enregistrement temporairement
                 temp_file_path = f"temp_recording_{latest_recording.sid}.wav"
                 with open(temp_file_path, "wb") as f:
                     f.write(response.content)
-
-                # Split the stereo file into two mono files
+                # Séparer les canaux
                 temp_file_left = f"temp_recording_{latest_recording.sid}_left.wav"
                 temp_file_right = f"temp_recording_{latest_recording.sid}_right.wav"
                 split_stereo(temp_file_path, temp_file_left, temp_file_right)
-
-                # Transcribe both channels
-                transcript_left = transcribe_local(temp_file_left, credentials, crop_duration)
-                transcript_right = transcribe_local(temp_file_right, credentials, crop_duration)
-
-                # Display the transcripts
-                st.subheader("Transcription (Left Channel - Caller):")
+                
+                # Transcrire les deux canaux
+                transcript_left = transcribe_local(temp_file_left, credentials)
+                transcript_right = transcribe_local(temp_file_right, credentials)
+                # Afficher les transcriptions
+                st.subheader("Transcription (Canal Gauche - Appelant):")
                 st.text(transcript_left)
                 
-                st.subheader("Transcription (Right Channel - Recipient):")
+                st.subheader("Transcription (Canal Droit - Destinataire):")
                 st.text(transcript_right)
 
-                # Clean up the temporary files
+                # Nettoyer les fichiers temporaires
                 os.remove(temp_file_path)
                 os.remove(temp_file_left)
                 os.remove(temp_file_right)
             else:
-                st.error("Failed to download the recording.")
+                st.error("Échec du téléchargement de l'enregistrement.")
     else:
         st.info("No recent recordings found.")
