@@ -1,14 +1,20 @@
 import streamlit as st
 from transcribe.transcribe import *
 from google.oauth2 import service_account
-import json
-from twilio_handlers import twilio_client, credentials
+from twilio_handlers import twilio_client
 import os
 from dotenv import load_dotenv
 import requests
 from requests.auth import HTTPBasicAuth
+from pydub import AudioSegment
+from google.cloud import storage
+from datetime import datetime
+import io
+import tempfile
+from google.cloud import speech_v1 as speech
+from google.api_core.exceptions import GoogleAPICallError
 
-# Chargement des variables d'environnement
+# Loading environment variables
 load_dotenv()
 
 # Configuration des credentials Google Cloud
@@ -26,6 +32,52 @@ credentials_dict = {
 }
 
 credentials = service_account.Credentials.from_service_account_info(credentials_dict)
+
+# Add this function to split and upload audio
+def process_and_upload_audio(audio_content, bucket_name):
+    # Split stereo audio
+    audio = AudioSegment.from_wav(io.BytesIO(audio_content))
+    channels = audio.split_to_mono()
+    
+    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    storage_client = storage.Client(credentials=credentials)
+    bucket = storage_client.bucket(bucket_name)
+    
+    gcs_uris = []
+    
+    for i, channel in enumerate(channels):
+        speaker = "caller" if i == 0 else "receiver"
+        filename = f"{speaker}_{current_datetime}.wav"
+        
+        # Use tempfile to create a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_file:
+            temp_path = temp_file.name
+            channel.export(temp_path, format="wav")
+        
+        # Upload to GCS
+        blob = bucket.blob(filename)
+        blob.upload_from_filename(temp_path)
+        
+        gcs_uris.append(f"gs://{bucket_name}/{filename}")
+        
+        # Clean up temporary file
+        os.unlink(temp_path)
+    
+    return gcs_uris
+
+# Add this function to get the latest files from GCS
+def get_latest_gcs_files(bucket_name):
+    storage_client = storage.Client(credentials=credentials)
+    bucket = storage_client.bucket(bucket_name)
+    blobs = list(bucket.list_blobs())
+    
+    # Sort blobs by creation time, most recent first
+    sorted_blobs = sorted(blobs, key=lambda x: x.time_created, reverse=True)
+    
+    # Return the two most recent files
+    return [blob.name for blob in sorted_blobs[:10]]
+
 def check_password():
     """Returns `True` if the user entered the correct password."""
     def password_entered():
@@ -53,142 +105,144 @@ def check_password():
         # Password correct
         return True
 
+def check_gcs_permissions(bucket_name):
+    try:
+        storage_client = storage.Client(credentials=credentials)
+        bucket = storage_client.bucket(bucket_name)
+        permissions = bucket.test_iam_permissions(['storage.objects.list', 'storage.objects.get'])
+        if not permissions:
+            st.error(f"Missing GCS permissions. Required: storage.objects.list, storage.objects.get")
+            return False
+        return True
+    except Exception as e:
+        st.error(f"GCS Permission Error: {str(e)}")
+        return False
+
 if check_password():
-    # Application Streamlit
-    st.title("Transcription Speech-to-Text et Gestion des Appels")
+    # Streamlit Application
+    st.title("Speech-to-Text Transcription and Call Management")
 
-    # Section d'appel Twilio
-    st.header("Passer un appel et transcrire")
-    forward_number = st.text_input("Entrez le numéro intermédiaire (ex: +1234567890)")
-    to_number = st.text_input("Entrez le numéro final du destinataire (ex: +1234567890)")
+    # Twilio Call Section
+    st.header("Make a call and transcribe")
+    forward_number = st.text_input("Enter the intermediate number (e.g., +1234567890)")
+    to_number = st.text_input("Enter the final recipient's number (e.g., +1234567890)")
 
-    if st.button("Passer un appel"):
+    if st.button("Make a call"):
         if forward_number and to_number:
             try:
                 response = requests.post(f"{os.getenv('NGROK_URL')}/make_call", 
                                          json={"forward_number": forward_number, "to_number": to_number})
                 if response.status_code == 200:
                     call_data = response.json()
-                    st.success(f"Appel initié. SID: {call_data['sid']}")
+                    st.success(f"Call initiated. SID: {call_data['sid']}")
                 else:
-                    st.error(f"Erreur lors de l'appel : {response.text}")
+                    st.error(f"Error during call: {response.text}")
             except Exception as e:
-                st.error(f"Erreur lors de l'appel : {str(e)}")
+                st.error(f"Error during call: {str(e)}")
         else:
-            st.warning("Veuillez entrer les deux numéros de téléphone")
-    # Section pour obtenir les enregistrements
-    # Section pour obtenir les enregistrements
-    st.header("Obtenir les derniers enregistrements")
-    if st.button("Afficher les 5 derniers enregistrements"):
+            st.warning("Please enter both phone numbers")
+
+    # Section to get and process recordings
+    st.header("Process recordings")
+    if st.button("Fetch latest 5 recordings"):
         recordings = twilio_client.recordings.list(limit=5)
-        if not recordings:
-            st.info("Aucun enregistrement trouvé.")
-        else:
-            for rec in recordings:
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.write(f"SID: {rec.sid}")
-                with col2:
-                    st.write(f"Date: {rec.date_created.strftime('%Y-%m-%d %H:%M:%S')}")
-                with col3:
-                    stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{rec.sid}.wav?RequestedChannels=2"
-                    response = requests.get(stereo_url, auth=HTTPBasicAuth(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN')))
-                    
-                    if response.status_code == 200 and len(response.content) > 0:
-                        st.download_button(
-                            label=f"Télécharger {rec.sid}",
-                            data=response.content,
-                            file_name=f"recording_{rec.sid}_stereo.wav",
-                            mime="audio/wav",
-                            key=f"download_button_{rec.sid}"
-                        )
-                    else:
-                        st.error(f"Erreur lors du chargement de l'enregistrement {rec.sid}")
-
-    # Section d'upload de fichier
-    st.header("Uploader un fichier audio")
-    uploaded_file = st.file_uploader("Choisissez un fichier audio", type=["mp3", "wav"])
-
-    if uploaded_file is not None:
-        # Sauvegarde du fichier uploadé sur le disque
-        with open(uploaded_file.name, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        # Transcription du fichier audio uploadé
-        st.write("Transcription du fichier en cours...")
-        transcript = transcribe_local(uploaded_file.name, credentials)
-        st.subheader("Transcription:")
-        st.text(transcript)
-
-    # Section URL GCS
-    st.header("Entrer une URL GCS")
-    gcs_url = st.text_input("URL GCS")
-
-    if gcs_url:
-        # Transcription du fichier audio depuis l'URL GCS
-        st.write("Transcription de l'audio depuis l'URL GCS en cours...")
-        transcript = transcribe_gcs_large(gcs_url, credentials)  # Utiliser transcribe_gcs_large
-        st.subheader("Transcription:")
-        st.text(transcript)
-
-    # Function to get the latest recording
-    def get_latest_recording():
-        recordings = twilio_client.recordings.list(limit=1)
         if recordings:
-            return recordings[0]
-        return None
+            st.session_state['recordings'] = recordings
+            for rec in recordings:
+                st.write(f"SID: {rec.sid}, Date: {rec.date_created.strftime('%Y-%m-%d %H:%M:%S')}")
+        else:
+            st.info("No recent recordings found.")
 
-    # After the call is completed
-    st.header("Transcribe Latest Call")
-    latest_recording = get_latest_recording()
-
-    if latest_recording:
-        st.write(f"Latest recording SID: {latest_recording.sid}")
-        st.write(f"Date: {latest_recording.date_created.strftime('%Y-%m-%d %H:%M:%S')}")
-
-        # Option to crop audio
-        crop_option = st.radio("Transcription option:", ("Full audio", "Crop audio"))
-        crop_duration = None
-
-        if crop_option == "Crop audio":
-            crop_duration = st.number_input("Enter crop duration in seconds:", min_value=1, value=30)
-
-    latest_recording = get_latest_recording()
-
-    if latest_recording:
-        st.write(f"Latest recording SID: {latest_recording.sid}")
-        st.write(f"Date: {latest_recording.date_created.strftime('%Y-%m-%d %H:%M:%S')}")
-
-        if st.button("Transcribe Call"):
-            # Télécharger l'enregistrement
-            stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{latest_recording.sid}.wav?RequestedChannels=2"
+    if 'recordings' in st.session_state:
+        selected_sid = st.selectbox("Select a recording to process", 
+                                    options=[rec.sid for rec in st.session_state['recordings']],
+                                    format_func=lambda x: f"{x} - {next(rec.date_created.strftime('%Y-%m-%d %H:%M:%S') for rec in st.session_state['recordings'] if rec.sid == x)}")
+        
+        if st.button("Process selected recording"):
+            selected_recording = next(rec for rec in st.session_state['recordings'] if rec.sid == selected_sid)
+            st.write(f"Processing recording SID: {selected_recording.sid}")
+            
+            # Download the stereo recording
+            stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{selected_recording.sid}.wav?RequestedChannels=2"
             response = requests.get(stereo_url, auth=HTTPBasicAuth(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN')))
-
+            
             if response.status_code == 200:
-                # Sauvegarder l'enregistrement temporairement
-                temp_file_path = f"temp_recording_{latest_recording.sid}.wav"
-                with open(temp_file_path, "wb") as f:
-                    f.write(response.content)
-                # Séparer les canaux
-                temp_file_left = f"temp_recording_{latest_recording.sid}_left.wav"
-                temp_file_right = f"temp_recording_{latest_recording.sid}_right.wav"
-                split_stereo(temp_file_path, temp_file_left, temp_file_right)
+                # Process and upload the audio
+                bucket_name = "excalibur-testing"  # Replace with your actual bucket name
+                gcs_uris = process_and_upload_audio(response.content, bucket_name)
                 
-                # Transcrire les deux canaux
-                transcript_left = transcribe_local(temp_file_left, credentials)
-                transcript_right = transcribe_local(temp_file_right, credentials)
-                # Afficher les transcriptions
-                st.subheader("Transcription (Canal Gauche - Appelant):")
-                st.text(transcript_left)
-                
-                st.subheader("Transcription (Canal Droit - Destinataire):")
-                st.text(transcript_right)
-
-                # Nettoyer les fichiers temporaires
-                os.remove(temp_file_path)
-                os.remove(temp_file_left)
-                os.remove(temp_file_right)
+                st.success(f"Audio processed and uploaded. GCS URIs: {gcs_uris}")
             else:
-                st.error("Échec du téléchargement de l'enregistrement.")
-    else:
-        st.info("No recent recordings found.")
+                st.error("Failed to download the recording.")
+
+    # Section to display and transcribe the latest uploaded files
+    st.header("Display and transcribe the latest uploaded files")
+    
+    if 'files_displayed' not in st.session_state:
+        st.session_state.files_displayed = False
+    
+    if 'selected_files' not in st.session_state:
+        st.session_state.selected_files = []
+    
+    if 'transcription_requested' not in st.session_state:
+        st.session_state.transcription_requested = False
+    
+    if 'transcription_results' not in st.session_state:
+        st.session_state.transcription_results = {}
+    
+    if 'conversation' not in st.session_state:
+        st.session_state.conversation = None
+    
+    if st.button("Display latest files") or st.session_state.files_displayed:
+        st.session_state.files_displayed = True
+        bucket_name = "excalibur-testing"  # Replace with your actual bucket name
+        
+        if check_gcs_permissions(bucket_name):
+            latest_files = get_latest_gcs_files(bucket_name)
+            
+            if latest_files:
+                file_options = {file: f"Select {file}" for file in latest_files}
+                st.session_state.selected_files = st.multiselect(
+                    "Select two files to transcribe (caller and receiver)", 
+                    options=list(file_options.keys()), 
+                    format_func=lambda x: file_options[x],
+                    key='file_selector',
+                    max_selections=2
+                )
+
+                if len(st.session_state.selected_files) == 2 and st.button("Transcribe selected files"):
+                    st.session_state.transcription_requested = True
+                    st.session_state.transcription_results = {}
+                    st.session_state.conversation = None
+
+                if st.session_state.transcription_requested:
+                    for file in st.session_state.selected_files:
+                        gcs_uri = f"gs://{bucket_name}/{file}"
+                        
+                        if file not in st.session_state.transcription_results:
+                            st.info(f"Starting transcription for {file}...")
+                            try:
+                                transcript = transcribe_gcs_large(gcs_uri, credentials)
+                                st.session_state.transcription_results[file] = transcript
+                                st.success(f"Transcription for {file} completed successfully.")
+                            except Exception as e:
+                                st.error(f"An error occurred during transcription of {file}: {str(e)}")
+                
+                    if len(st.session_state.transcription_results) == 2:
+                        caller_transcript, receiver_transcript = st.session_state.transcription_results.values()
+                        st.session_state.conversation = rearrange_conversation(caller_transcript, receiver_transcript)
+                        
+                        st.subheader("Rearranged Conversation:")
+                        st.text_area("Conversation:", value=st.session_state.conversation, height=300)
+                        
+                        # Offer download of rearranged conversation
+                        st.download_button(
+                            label="Download rearranged conversation",
+                            data=st.session_state.conversation,
+                            file_name="rearranged_conversation.txt",
+                            mime="text/plain"
+                        )
+            else:
+                st.warning("No files found in the bucket.")
+        else:
+            st.error("GCS permission check failed. Please check your Google Cloud setup.")
