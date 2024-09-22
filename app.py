@@ -1,18 +1,15 @@
 import streamlit as st
 from transcribe.transcribe import *
 from google.oauth2 import service_account
-from twilio_handlers import twilio_client
+from twiliohelpers.twilio_handlers import twilio_client
+from gcs.gcs_handlers import check_gcs_permissions, get_latest_gcs_files, process_and_upload_audio
+from utils import check_password
 import os
 from dotenv import load_dotenv
 import requests
 from requests.auth import HTTPBasicAuth
-from pydub import AudioSegment
-from google.cloud import storage
-from datetime import datetime
-import io
-import tempfile
-from google.cloud import speech_v1 as speech
-from google.api_core.exceptions import GoogleAPICallError
+
+
 
 # Loading environment variables
 load_dotenv()
@@ -33,90 +30,6 @@ credentials_dict = {
 
 credentials = service_account.Credentials.from_service_account_info(credentials_dict)
 
-# Add this function to split and upload audio
-def process_and_upload_audio(audio_content, bucket_name):
-    # Split stereo audio
-    audio = AudioSegment.from_wav(io.BytesIO(audio_content))
-    channels = audio.split_to_mono()
-    
-    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
-    storage_client = storage.Client(credentials=credentials)
-    bucket = storage_client.bucket(bucket_name)
-    
-    gcs_uris = []
-    
-    for i, channel in enumerate(channels):
-        speaker = "caller" if i == 0 else "receiver"
-        filename = f"{speaker}_{current_datetime}.wav"
-        
-        # Use tempfile to create a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_file:
-            temp_path = temp_file.name
-            channel.export(temp_path, format="wav")
-        
-        # Upload to GCS
-        blob = bucket.blob(filename)
-        blob.upload_from_filename(temp_path)
-        
-        gcs_uris.append(f"gs://{bucket_name}/{filename}")
-        
-        # Clean up temporary file
-        os.unlink(temp_path)
-    
-    return gcs_uris
-
-# Add this function to get the latest files from GCS
-def get_latest_gcs_files(bucket_name):
-    storage_client = storage.Client(credentials=credentials)
-    bucket = storage_client.bucket(bucket_name)
-    blobs = list(bucket.list_blobs())
-    
-    # Sort blobs by creation time, most recent first
-    sorted_blobs = sorted(blobs, key=lambda x: x.time_created, reverse=True)
-    
-    # Return the two most recent files
-    return [blob.name for blob in sorted_blobs[:10]]
-
-def check_password():
-    """Returns `True` if the user entered the correct password."""
-    def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        if st.session_state["password"] == "ava":  # Change to 'ava'
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]  # Don't store password
-        else:
-            st.session_state["password_correct"] = False
-
-    if "password_correct" not in st.session_state:
-        # First run, show input for password
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        return False
-    elif not st.session_state["password_correct"]:
-        # Password incorrect, show input + error
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        st.error("😕 Password incorrect")
-        return False
-    else:
-        # Password correct
-        return True
-
-def check_gcs_permissions(bucket_name):
-    try:
-        storage_client = storage.Client(credentials=credentials)
-        bucket = storage_client.bucket(bucket_name)
-        permissions = bucket.test_iam_permissions(['storage.objects.list', 'storage.objects.get'])
-        if not permissions:
-            st.error(f"Missing GCS permissions. Required: storage.objects.list, storage.objects.get")
-            return False
-        return True
-    except Exception as e:
-        st.error(f"GCS Permission Error: {str(e)}")
-        return False
 
 if check_password():
     # Streamlit Application
@@ -169,7 +82,7 @@ if check_password():
             if response.status_code == 200:
                 # Process and upload the audio
                 bucket_name = "excalibur-testing"  # Replace with your actual bucket name
-                gcs_uris = process_and_upload_audio(response.content, bucket_name)
+                gcs_uris = process_and_upload_audio(response.content, bucket_name, credentials)
                 
                 st.success(f"Audio processed and uploaded. GCS URIs: {gcs_uris}")
             else:
@@ -197,8 +110,8 @@ if check_password():
         st.session_state.files_displayed = True
         bucket_name = "excalibur-testing"  # Replace with your actual bucket name
         
-        if check_gcs_permissions(bucket_name):
-            latest_files = get_latest_gcs_files(bucket_name)
+        if check_gcs_permissions(bucket_name, credentials):
+            latest_files = get_latest_gcs_files(bucket_name, credentials)
             
             if latest_files:
                 file_options = {file: f"Select {file}" for file in latest_files}
