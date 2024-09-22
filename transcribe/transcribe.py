@@ -76,30 +76,6 @@ def transcribe_local(path, credentials, crop_duration=None, channel=None):
     return "\n".join(transcripts)
 
 
-def transcribe_gcs(gcs_uri, credentials):
-    # Instantiates a client
-    client = speech.SpeechClient(credentials=credentials)
-
-    # Configure the audio file from GCS URI
-    audio = speech.RecognitionAudio(uri=gcs_uri)
-
-    config = speech.RecognitionConfig(
-      encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-      sample_rate_hertz=32000,
-      language_code="fr-FR",
-    )
-    
-    # Detects speech in the audio file
-    response = client.recognize(config=config, audio=audio)
-
-    # Collect the transcript and write to a text file
-    transcript = ""
-    for result in response.results:
-        transcript += result.alternatives[0].transcript + "\n"
-
-    return transcript
-
-
 def transcribe_gcs_large(gcs_uri, credentials):
     # Instantiates a client
     client = speech.SpeechClient(credentials=credentials)
@@ -114,6 +90,7 @@ def transcribe_gcs_large(gcs_uri, credentials):
         use_enhanced=True,
         model="phone_call",
         enable_automatic_punctuation=True,
+        enable_word_time_offsets=True,  # Enable word time offsets
         speech_contexts=[speech.SpeechContext(phrases=["adresse ", "rue","date de naissance","travail","dettes"])]
     )
     # Asynchronously detect speech in the audio file
@@ -122,9 +99,51 @@ def transcribe_gcs_large(gcs_uri, credentials):
     # Wait for the operation to complete
     response = operation.result(timeout=600)
 
-    # Collect the transcript and return it
+    # Collect the transcript and timing information
     transcript = ""
     for result in response.results:
-        transcript += result.alternatives[0].transcript + "\n"
+        alternative = result.alternatives[0]
+        
+        # Add word-level timing information
+        for word_info in alternative.words:
+            word = word_info.word
+            start_time = word_info.start_time.total_seconds()
+            transcript += f"Word: {word}, Start: {start_time:.2f}s\n"
+        
+        transcript += "\n"  # Add a blank line between utterances
 
     return transcript
+
+def rearrange_conversation(caller_transcript, receiver_transcript):
+    # Combine both transcripts
+    combined_transcript = []
+    for line in caller_transcript.split('\n'):
+        if line.startswith('Word:'):
+            word, start = line.split(', ')
+            combined_transcript.append(('Caller', word.split(': ')[1], float(start.split(': ')[1][:-1])))
+    for line in receiver_transcript.split('\n'):
+        if line.startswith('Word:'):
+            word, start = line.split(', ')
+            combined_transcript.append(('Receiver', word.split(': ')[1], float(start.split(': ')[1][:-1])))
+
+    # Sort the combined transcript by start time
+    combined_transcript.sort(key=lambda x: x[2])
+
+    # Rearrange into conversation format
+    conversation = []
+    current_speaker = None
+    current_utterance = []
+
+    for speaker, word, _ in combined_transcript:
+        if speaker != current_speaker:
+            if current_utterance:
+                conversation.append(f"{current_speaker}: {' '.join(current_utterance)}")
+                current_utterance = []
+            current_speaker = speaker
+        current_utterance.append(word)
+
+    # Add the last utterance
+    if current_utterance:
+        conversation.append(f"{current_speaker}: {' '.join(current_utterance)}")
+
+    return '\n'.join(conversation)

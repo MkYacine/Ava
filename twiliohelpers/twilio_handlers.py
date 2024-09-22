@@ -1,13 +1,10 @@
-from flask import Flask, request,jsonify
-from twilio.twiml.voice_response import VoiceResponse
+from flask import Flask, request, jsonify
 from twilio.rest import Client
 from dotenv import load_dotenv
 import os
 from twilio.twiml.voice_response import VoiceResponse, Dial
 from flask import send_file
-from google.cloud import storage
 from google.oauth2 import service_account
-from transcribe.transcribe import transcribe_gcs_large
 import uuid
 import logging
 import requests
