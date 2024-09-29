@@ -8,8 +8,8 @@ import os
 from dotenv import load_dotenv
 import requests
 from requests.auth import HTTPBasicAuth
-
-
+import anthropic
+from anthropic import Anthropic
 
 # Loading environment variables
 load_dotenv()
@@ -159,3 +159,50 @@ if check_password():
                 st.warning("No files found in the bucket.")
         else:
             st.error("GCS permission check failed. Please check your Google Cloud setup.")
+
+    # New section for Claude 3.5 Sonnet API request
+    st.header("Generate AI Response")
+
+    # Load prompt template
+    with open("prompt_template.txt", "r") as file:
+        prompt_template = file.read()
+
+    # Load form and transcript
+    with open("form_short.txt", "r") as file:
+        form_text = file.read()
+    with open("transcript.txt", "r") as file:
+        transcript_text = file.read()
+
+    # Prepare the prompt
+    prompt = prompt_template.format(form=form_text, transcript=transcript_text)
+
+    if st.button("Generate AI Response"):
+        try:
+            # Initialize Anthropic client
+            anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+            # Send request to Anthropic API using the Messages API
+            response = anthropic_client.messages.create(
+                model="claude-3-5-sonnet-20240620",
+                max_tokens=8192,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+
+            # Get the generated text
+            generated_text = response.content[0].text
+
+            # Display info message
+            st.info("AI response generated successfully!")
+
+            # Offer download of generated text
+            st.download_button(
+                label="Download AI Response",
+                data=generated_text,
+                file_name="ai_response.txt",
+                mime="text/plain"
+            )
+
+        except Exception as e:
+            st.error(f"An error occurred while generating the AI response: {str(e)}")

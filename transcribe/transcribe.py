@@ -87,11 +87,18 @@ def transcribe_gcs_large(gcs_uri, credentials):
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=8000,
         language_code="fr-CA",
+        alternative_language_codes=["fr-FR"],
         use_enhanced=True,
         model="phone_call",
         enable_automatic_punctuation=True,
-        enable_word_time_offsets=True,  # Enable word time offsets
-        speech_contexts=[speech.SpeechContext(phrases=["adresse ", "rue","date de naissance","travail","dettes"])]
+        enable_word_time_offsets=True,
+        enable_word_confidence=True,  # Add this line to enable word-level confidence
+        audio_channel_count=1,
+        profanity_filter=False,
+        speech_contexts=[speech.SpeechContext(
+            phrases=["adresse ", "rue", "date de naissance","travail","dettes", "rayan", "bechichi", "assurance"],
+            boost=20
+        )]
     )
     # Asynchronously detect speech in the audio file
     operation = client.long_running_recognize(config=config, audio=audio)
@@ -104,14 +111,14 @@ def transcribe_gcs_large(gcs_uri, credentials):
     for result in response.results:
         alternative = result.alternatives[0]
         
-        # Add word-level timing information
+        # Add word-level timing information and confidence
         for word_info in alternative.words:
             word = word_info.word
             start_time = word_info.start_time.total_seconds()
-            transcript += f"Word: {word}, Start: {start_time:.2f}s\n"
+            confidence = word_info.confidence
+            transcript += f"Word: {word}, Start: {start_time:.2f}s, Confidence: {confidence:.2f}\n"
         
         transcript += "\n"  # Add a blank line between utterances
-
     return transcript
 
 def rearrange_conversation(caller_transcript, receiver_transcript):
@@ -119,12 +126,18 @@ def rearrange_conversation(caller_transcript, receiver_transcript):
     combined_transcript = []
     for line in caller_transcript.split('\n'):
         if line.startswith('Word:'):
-            word, start = line.split(', ')
-            combined_transcript.append(('Caller', word.split(': ')[1], float(start.split(': ')[1][:-1])))
+            parts = line.split(', ')
+            word = parts[0].split(': ')[1]
+            start = float(parts[1].split(': ')[1][:-1])
+            confidence = float(parts[2].split(': ')[1])
+            combined_transcript.append(('Caller', word, start, confidence))
     for line in receiver_transcript.split('\n'):
         if line.startswith('Word:'):
-            word, start = line.split(', ')
-            combined_transcript.append(('Receiver', word.split(': ')[1], float(start.split(': ')[1][:-1])))
+            parts = line.split(', ')
+            word = parts[0].split(': ')[1]
+            start = float(parts[1].split(': ')[1][:-1])
+            confidence = float(parts[2].split(': ')[1])
+            combined_transcript.append(('Receiver', word, start, confidence))
 
     # Sort the combined transcript by start time
     combined_transcript.sort(key=lambda x: x[2])
@@ -134,16 +147,18 @@ def rearrange_conversation(caller_transcript, receiver_transcript):
     current_speaker = None
     current_utterance = []
 
-    for speaker, word, _ in combined_transcript:
+    for speaker, word, _, confidence in combined_transcript:
         if speaker != current_speaker:
             if current_utterance:
-                conversation.append(f"{current_speaker}: {' '.join(current_utterance)}")
+                conversation.append(f"{current_speaker}: {' '.join(word for word, _ in current_utterance)}")
+                conversation.append(f"Confidence: {' '.join(f'{conf:.2f}' for _, conf in current_utterance)}")
                 current_utterance = []
             current_speaker = speaker
-        current_utterance.append(word)
+        current_utterance.append((word, confidence))
 
     # Add the last utterance
     if current_utterance:
-        conversation.append(f"{current_speaker}: {' '.join(current_utterance)}")
+        conversation.append(f"{current_speaker}: {' '.join(word for word, _ in current_utterance)}")
+        conversation.append(f"Confidence: {' '.join(f'{conf:.2f}' for _, conf in current_utterance)}")
 
     return '\n'.join(conversation)
