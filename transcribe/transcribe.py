@@ -1,6 +1,7 @@
 from google.cloud import speech
 from pydub import AudioSegment
 import os
+import json
 
 
 def split_stereo(input_path, output_path_left, output_path_right):
@@ -87,12 +88,11 @@ def transcribe_gcs_large(gcs_uri, credentials):
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=8000,
         language_code="fr-CA",
-        alternative_language_codes=["fr-FR"],
         use_enhanced=True,
-        model="phone_call",
+        model="telephony",
         enable_automatic_punctuation=True,
         enable_word_time_offsets=True,
-        enable_word_confidence=True,  # Add this line to enable word-level confidence
+        enable_word_confidence=True,
         audio_channel_count=1,
         profanity_filter=False,
         speech_contexts=[speech.SpeechContext(
@@ -100,11 +100,57 @@ def transcribe_gcs_large(gcs_uri, credentials):
             boost=20
         )]
     )
+        
     # Asynchronously detect speech in the audio file
     operation = client.long_running_recognize(config=config, audio=audio)
 
-    # Wait for the operation to complete
-    response = operation.result(timeout=600)
+    print(f"Waiting for operation to complete...")
+    response = operation.result(timeout=900)
+
+    # Write raw response to file and print to console
+    try:
+        raw_response_dict = {
+            "results": [
+                {
+                    "alternatives": [
+                        {
+                            "transcript": alt.transcript,
+                            "confidence": alt.confidence,
+                            "words": [
+                                {
+                                    "word": word.word,
+                                    "start_time": word.start_time.total_seconds(),
+                                    "end_time": word.end_time.total_seconds(),
+                                    "confidence": word.confidence
+                                } for word in alt.words
+                            ]
+                        } for alt in result.alternatives
+                    ]
+                } for result in response.results
+            ]
+        }
+        
+        with open("raw_speech_to_text_output.txt", "w") as f:
+            json.dump(raw_response_dict, f, indent=2)
+        
+        print("Raw Speech-to-Text Response:")
+        print(json.dumps(raw_response_dict, indent=2))
+    except Exception as e:
+        print(f"Error while processing raw response: {str(e)}")
+        print("Falling back to basic response structure:")
+        basic_response = {
+            "results": [
+                {
+                    "alternatives": [
+                        {
+                            "transcript": result.alternatives[0].transcript,
+                            "confidence": result.alternatives[0].confidence
+                        }
+                    ]
+                } for result in response.results
+            ]
+        }
+        print(json.dumps(basic_response, indent=2))
 
     # Collect the transcript and timing information
     transcript = ""
@@ -119,6 +165,7 @@ def transcribe_gcs_large(gcs_uri, credentials):
             transcript += f"Word: {word}, Start: {start_time:.2f}s, Confidence: {confidence:.2f}\n"
         
         transcript += "\n"  # Add a blank line between utterances
+
     return transcript
 
 def rearrange_conversation(caller_transcript, receiver_transcript):
