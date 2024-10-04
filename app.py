@@ -164,13 +164,13 @@ if check_password():
     st.header("Generate AI Response")
 
     # Load prompt template
-    with open("prompt_template.txt", "r") as file:
+    with open("prompt_template.txt", "r", encoding="utf-8") as file:
         prompt_template = file.read()
 
     # Load form and transcript
-    with open("form_short.txt", "r") as file:
+    with open("form_short.txt", "r", encoding="utf-8") as file:
         form_text = file.read()
-    with open("transcript.txt", "r") as file:
+    with open("filtered_conversation.txt", "r", encoding="utf-8") as file:
         transcript_text = file.read()
 
     # Prepare the prompt
@@ -199,7 +199,7 @@ if check_password():
             # Offer download of generated text
             st.download_button(
                 label="Download AI Response",
-                data=generated_text,
+                data=generated_text.encode("utf-8"),
                 file_name="ai_response.txt",
                 mime="text/plain"
             )
