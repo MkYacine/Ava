@@ -10,6 +10,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import anthropic
 from anthropic import Anthropic
+from fillpdf.topdf import fill_and_flatten_pdf
 
 # Loading environment variables
 load_dotenv()
@@ -164,17 +165,21 @@ if check_password():
     st.header("Generate AI Response")
 
     # Load prompt template
-    with open("prompt_template.txt", "r", encoding="utf-8") as file:
+    with open(r"docs\prompt_template.txt", "r", encoding="utf-8") as file:
         prompt_template = file.read()
+    with open(r"docs\prompt_summary.txt", "r", encoding="utf-8") as file:
+        prompt_summary = file.read()
 
     # Load form and transcript
-    with open("form_short.txt", "r", encoding="utf-8") as file:
+    with open(r"docs\form_short.txt", "r", encoding="utf-8") as file:
         form_text = file.read()
-    with open("filtered_conversation.txt", "r", encoding="utf-8") as file:
+    with open(r"docs\filtered_conversation.txt", "r", encoding="utf-8") as file:
         transcript_text = file.read()
 
     # Prepare the prompt
     prompt = prompt_template.format(form=form_text, transcript=transcript_text)
+    #resume prompt
+    summary_prompt = prompt_summary.format(transcript=transcript_text)
 
     if st.button("Generate AI Response"):
         try:
@@ -200,6 +205,72 @@ if check_password():
             st.download_button(
                 label="Download AI Response",
                 data=generated_text.encode("utf-8"),
+                file_name="ai_response.txt",
+                mime="text/plain"
+            )
+
+        except Exception as e:
+            st.error(f"An error occurred while generating the AI response: {str(e)}")
+    st.header("Generate PDF from AI Response")
+    if st.button("Generate PDF"):
+        try:
+            # Read the AI response
+            with open("docs/ai_response.txt", "r", encoding="utf-8") as file:
+                ai_response = file.read()
+
+            # Extract JSON data from the AI response
+            json_start = ai_response.find('{')
+            json_end = ai_response.rfind('}') + 1
+            json_data = ai_response[json_start:json_end]
+
+            # Parse JSON data
+            data_dict = json.loads(json_data)
+
+            # Define paths
+            input_pdf_path = "docs/form.pdf"
+            output_pdf_path = "docs/filled_form.pdf"
+
+            # Fill and flatten the PDF
+            fill_and_flatten_pdf(input_pdf_path, data_dict, output_pdf_path)
+
+            st.success("PDF generated successfully!")
+
+            # Offer download of generated PDF
+            with open(output_pdf_path, "rb") as file:
+                st.download_button(
+                    label="Download Filled PDF",
+                    data=file.read(),
+                    file_name="filled_form.pdf",
+                    mime="application/pdf"
+                )
+
+        except Exception as e:
+            st.error(f"An error occurred while generating the PDF: {str(e)}")
+    if st.button("Generate summary "):
+        try:
+            # Initialize Anthropic client
+            anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+            # Send request to Anthropic API using the Messages API
+            response = anthropic_client.messages.create(
+                model="claude-3-5-sonnet-20240620",
+                max_tokens=8192,
+                messages=[
+                    {"role": "user", "content": summary_prompt}
+                ]
+            )
+
+            # Get the generated text
+            generated_text_summary = response.content[0].text
+
+            # Display info message
+            st.info("AI response generated successfully!")
+            st.subheader("AI Generated Summary:")
+            st.text_area("Contenu:", value=generated_text_summary, height=300, disabled=True)
+
+            # Offer download of generated text
+            st.download_button(
+                label="Download AI Response",
+                data=generated_text_summary.encode("utf-8"),
                 file_name="ai_response.txt",
                 mime="text/plain"
             )
