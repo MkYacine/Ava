@@ -1,0 +1,7 @@
+Human:
+
+Voici la transcription d'un appel entre un conseiller financier (Appelant) et un client potentiel (Receveur) :
+
+{transcript}
+
+Veuillez fournir un résumé concis (1-2 paragraphes) de cette conversation. Mettez en évidence les informations clés et la situation du client. Concentrez-vous sur les points essentiels, les problèmes soulevés et les solutions proposées. 

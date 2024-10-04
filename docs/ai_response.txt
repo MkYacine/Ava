@@ -1,0 +1,46 @@
+Voici le formulaire rempli en format JSON basé sur la conversation :
+
+{
+  "Prénom_client1": "Rayane",
+  "Nom_client1": "Bouslama",
+  "Date de naissance client 1": "8 juillet 2002",
+  "Telephone_client_1": "438 366 92 59",
+  "Adresse_client_1": "1194 rue relant",
+  "Ville_client_1": "Verdun",
+  "Client 2-Etat civil": "célibataire",
+  "Client 2-Case Non-Fume du tabac ?": true,
+  "Client 2- Residence au canada depuis_af_date": "2002",
+  "Prénom_client2": "Anna",
+  "Nom_client2": "Polina",
+  "date de naissance client 2": "1 décembre 1998",
+  "Client 2-Courriel (personnel)": "anna.polina@gmail.com",
+  "Cell_2": "438 499 9259",
+  "Adresse_2": "1194 rue relant",
+  "Ville_2": "Verdun",
+  "Client 2- Residence au canada depuis_af_date": "2017",
+  "date de naissance enfant 1": "5 juillet 2010",
+  "objectif famille-ach": true,
+  "objectif famille-Financer les études des enfants": true,
+  "objectif travail - Changer de carrière": true,
+  "objectif travail - Obtenir une promotion": true,
+  "objectif finances : Revoir les placements actuels": true,
+  "objectif finances : Acheter/vendre une propriété": true,
+  "Retraite - Prévoir une occupation": true,
+  "Retraite - Rester à domicile le plus longtemps possible": true,
+  "Retraite - Conserver, vendre ou transférer une propriété": true,
+  "CELI  Institution-client2": "Industrielle Alliance",
+  "Valeur-celi-client2": "6000",
+  "Type CPG Fonds etc-client2": "fonds commun",
+  "residence secondaire-valeur client 1": "250000",
+  "PBR residence secondaire -client1": "150000",
+  "vehicule1client 1 - valeur": "20000",
+  "Revenu_brut_client1": "60000",
+  "Emploi-Poste-client-1": "conseiller en sécurité financière",
+  "Emploi Depuis - client_1": "août 2024",
+  "Employeur-client-1": "Industrielle Alliance"
+}
+
+Remarques sur les incohérences :
+1. Il y a une confusion sur l'état civil du client. Au début, il dit être célibataire, puis confirme être marié.
+2. La date d'embauche (août 2024) est dans le futur, ce qui semble être une erreur.
+3. Il y a des incohérences dans les informations sur les enfants. Le client mentionne d'abord ne pas avoir d'enfants à charge, puis donne des informations sur un enfant.
