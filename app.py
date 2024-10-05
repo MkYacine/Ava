@@ -11,6 +11,9 @@ from requests.auth import HTTPBasicAuth
 import anthropic
 from anthropic import Anthropic
 from fillpdf.topdf import fill_and_flatten_pdf
+from transcribe.validate import validate_form
+import re
+from pydub import AudioSegment
 
 # Loading environment variables
 load_dotenv()
@@ -83,7 +86,7 @@ if check_password():
             if response.status_code == 200:
                 # Process and upload the audio
                 bucket_name = "excalibur-testing"  # Replace with your actual bucket name
-                gcs_uris = process_and_upload_audio(response.content, bucket_name, credentials)
+                gcs_uris, channels = process_and_upload_audio(response.content, bucket_name, credentials)
                 
                 st.success(f"Audio processed and uploaded. GCS URIs: {gcs_uris}")
             else:
@@ -173,7 +176,7 @@ if check_password():
     # Load form and transcript
     with open(r"docs\form_short.txt", "r", encoding="utf-8") as file:
         form_text = file.read()
-    with open(r"docs\filtered_conversation.txt", "r", encoding="utf-8") as file:
+    with open(r"docs\filtered_conversation_conf.txt", "r", encoding="utf-8") as file:
         transcript_text = file.read()
 
     # Prepare the prompt
@@ -277,3 +280,76 @@ if check_password():
 
         except Exception as e:
             st.error(f"An error occurred while generating the AI response: {str(e)}")
+
+    # New section for form validation
+    st.header("Validate Form")
+    if st.button("Validate Form"):
+        try:
+            # Load the AI response
+            with open("docs/ai_response_conf.txt", "r", encoding="utf-8") as file:
+                ai_response = file.read()
+            
+            # Read multiple WAV files (e.g., caller and receiver)
+            caller_path = "recordings/bechichi.wav"
+            receiver_path = "recordings/boubou.wav"
+
+            a1 = AudioSegment.from_wav(caller_path)
+            a2 = AudioSegment.from_wav(receiver_path)
+
+            with open('logs/logs_20241004_181540.json', 'r', encoding='utf-8') as f:
+                t0 = json.load(f)
+            with open('logs/logs_20241004_181841.json', 'r', encoding='utf-8') as f:
+                t1 = json.load(f)
+
+            # Validate the form
+            uncertainties, broken_rules, cleaned_form = validate_form(ai_response, [t0, t1], [a1,a2])
+            
+            # Store the cleaned form in session state
+            if 'cleaned_form' not in st.session_state:
+                st.session_state.cleaned_form = cleaned_form
+
+            issues = [v[0] for v in uncertainties] + broken_rules
+
+            # Display the updated cleaned form with highlighted issues
+            st.subheader("Cleaned Form:")
+            for key, value in st.session_state.cleaned_form.items():
+                highlighted_value = value
+                for issue in issues:
+                    if key in issue:
+                        pattern = re.escape(value)
+                        highlighted_value = re.sub(pattern, f'<span style="background-color: #FFCCCB;">{value}</span>', highlighted_value)
+                st.markdown(f"**{key}**: {highlighted_value}", unsafe_allow_html=True)
+            
+            # Display warnings and allow editing
+            if uncertainties:
+                st.subheader("Uncertainties:")
+                for i, (warning, audio) in enumerate(uncertainties):
+                    st.warning(warning)
+                    if audio is not None:
+                        st.audio(audio, format="audio/wav")
+                    
+                    # Extract the key from the warning message
+                    key = warning.split(":")[0].split("for ")[-1].strip()
+                    
+                    # Allow user to edit the value
+                    new_value = st.text_input(f"Edit value for {key}", value=st.session_state.cleaned_form.get(key, ""))
+                    
+                    # Update the cleaned form in session state
+                    if new_value != st.session_state.cleaned_form.get(key, ""):
+                        st.session_state.cleaned_form[key] = new_value
+
+            if broken_rules:
+                st.subheader("Validation Issues:")
+                for br in broken_rules:
+                    st.warning(br)
+
+        except Exception as e:
+            st.error(f"An error occurred during form validation: {str(e)}")
+
+    # Add a button to save the changes
+    if st.button("Save Changes"):
+        if 'cleaned_form' in st.session_state:
+            # Here you can add code to save the updated form data
+            st.success("Changes saved successfully!")
+        else:
+            st.warning("No changes to save. Please validate the form first.")

@@ -61,4 +61,4 @@ def process_and_upload_audio(audio_content, bucket_name, credentials):
         # Clean up temporary file
         os.unlink(temp_path)
     
-    return gcs_uris
+    return gcs_uris, channels
