@@ -214,41 +214,8 @@ if check_password():
 
         except Exception as e:
             st.error(f"An error occurred while generating the AI response: {str(e)}")
-    st.header("Generate PDF from AI Response")
-    if st.button("Generate PDF"):
-        try:
-            # Read the AI response
-            with open("docs/ai_response.txt", "r", encoding="utf-8") as file:
-                ai_response = file.read()
 
-            # Extract JSON data from the AI response
-            json_start = ai_response.find('{')
-            json_end = ai_response.rfind('}') + 1
-            json_data = ai_response[json_start:json_end]
-
-            # Parse JSON data
-            data_dict = json.loads(json_data)
-
-            # Define paths
-            input_pdf_path = "docs/form.pdf"
-            output_pdf_path = "docs/filled_form.pdf"
-
-            # Fill and flatten the PDF
-            fill_and_flatten_pdf(input_pdf_path, data_dict, output_pdf_path)
-
-            st.success("PDF generated successfully!")
-
-            # Offer download of generated PDF
-            with open(output_pdf_path, "rb") as file:
-                st.download_button(
-                    label="Download Filled PDF",
-                    data=file.read(),
-                    file_name="filled_form.pdf",
-                    mime="application/pdf"
-                )
-
-        except Exception as e:
-            st.error(f"An error occurred while generating the PDF: {str(e)}")
+    
     if st.button("Generate summary "):
         try:
             # Initialize Anthropic client
@@ -283,6 +250,13 @@ if check_password():
 
     # New section for form validation
     st.header("Validate Form")
+
+    # Initialize session state variables if they don't exist
+    if 'cleaned_form' not in st.session_state:
+        st.session_state.cleaned_form = {}
+    if 'issues' not in st.session_state:
+        st.session_state.issues = []
+
     if st.button("Validate Form"):
         try:
             # Load the AI response
@@ -302,54 +276,75 @@ if check_password():
                 t1 = json.load(f)
 
             # Validate the form
-            uncertainties, broken_rules, cleaned_form = validate_form(ai_response, [t0, t1], [a1,a2])
-            
-            # Store the cleaned form in session state
-            if 'cleaned_form' not in st.session_state:
-                st.session_state.cleaned_form = cleaned_form
-
-            issues = [v[0] for v in uncertainties] + broken_rules
-
-            # Display the updated cleaned form with highlighted issues
-            st.subheader("Cleaned Form:")
-            for key, value in st.session_state.cleaned_form.items():
-                highlighted_value = value
-                for issue in issues:
-                    if key in issue:
-                        pattern = re.escape(value)
-                        highlighted_value = re.sub(pattern, f'<span style="background-color: #FFCCCB;">{value}</span>', highlighted_value)
-                st.markdown(f"**{key}**: {highlighted_value}", unsafe_allow_html=True)
-            
-            # Display warnings and allow editing
-            if uncertainties:
-                st.subheader("Uncertainties:")
-                for i, (warning, audio) in enumerate(uncertainties):
-                    st.warning(warning)
-                    if audio is not None:
-                        st.audio(audio, format="audio/wav")
-                    
-                    # Extract the key from the warning message
-                    key = warning.split(":")[0].split("for ")[-1].strip()
-                    
-                    # Allow user to edit the value
-                    new_value = st.text_input(f"Edit value for {key}", value=st.session_state.cleaned_form.get(key, ""))
-                    
-                    # Update the cleaned form in session state
-                    if new_value != st.session_state.cleaned_form.get(key, ""):
-                        st.session_state.cleaned_form[key] = new_value
-
-            if broken_rules:
-                st.subheader("Validation Issues:")
-                for br in broken_rules:
-                    st.warning(br)
+            st.session_state.issues, st.session_state.cleaned_form = validate_form(ai_response, [t1, t0], [a2,a1])
 
         except Exception as e:
             st.error(f"An error occurred during form validation: {str(e)}")
 
-    # Add a button to save the changes
-    if st.button("Save Changes"):
-        if 'cleaned_form' in st.session_state:
-            # Here you can add code to save the updated form data
-            st.success("Changes saved successfully!")
-        else:
-            st.warning("No changes to save. Please validate the form first.")
+    # Display the form and allow editing
+    if st.session_state.cleaned_form:
+        st.subheader("Cleaned Form:")
+        issue_messages = [issue[0] for issue in st.session_state.issues]        
+        for key, value in st.session_state.cleaned_form.items():
+            highlighted_value = value
+            for issue in issue_messages:
+                if key in issue:
+                    pattern = re.escape(value)
+                    highlighted_value = re.sub(pattern, f'<span style="background-color: #FFCCCB;">{value}</span>', highlighted_value)
+            st.markdown(f"**{key}**: {highlighted_value}", unsafe_allow_html=True)
+
+        # Display issues and allow editing
+        if st.session_state.issues:
+            st.subheader("Issues:")
+            for i, (warning, audio) in enumerate(st.session_state.issues):
+                col1, col2, col3 = st.columns([3, 1, 1])
+                
+                with col1:
+                    st.warning(warning)
+                
+                with col2:
+                    if audio is not None:
+                        st.audio(audio, format="audio/wav")
+                
+                # Extract the key from the warning message
+                key = warning.split(":")[0].split("for ")[-1].strip()
+                
+                # Allow user to edit the value
+                new_value = st.text_input(f"Edit value for {key}", value=st.session_state.cleaned_form.get(key, ""), key=f"edit_{i}")
+                
+                with col3:
+                    if st.button("Apply", key=f"apply_{i}"):
+                        # Update the cleaned form in session state
+                        st.session_state.cleaned_form[key] = new_value
+                        # Remove this issue from the list
+                        st.session_state.issues.pop(i)
+                        st.success(f"Changes applied for {key}")
+                        st.rerun()
+    # Generate PDF section
+    if st.session_state.get('cleaned_form') and not st.session_state.get('issues'):
+        st.header("Generate PDF from Cleaned Form")
+        if st.button("Generate PDF"):
+            try:
+                # Use the cleaned form directly
+                data_dict = st.session_state.cleaned_form
+
+                # Define paths
+                input_pdf_path = "docs/form.pdf"
+                output_pdf_path = "docs/filled_form.pdf"
+
+                # Fill and flatten the PDF
+                fill_and_flatten_pdf(input_pdf_path, data_dict, output_pdf_path)
+
+                st.success("PDF generated successfully!")
+
+                # Offer download of generated PDF
+                with open(output_pdf_path, "rb") as file:
+                    st.download_button(
+                        label="Download Filled PDF",
+                        data=file.read(),
+                        file_name="filled_form.pdf",
+                        mime="application/pdf"
+                    )
+
+            except Exception as e:
+                st.error(f"An error occurred while generating the PDF: {str(e)}")

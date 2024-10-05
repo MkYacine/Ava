@@ -54,7 +54,7 @@ Voici le formulaire rempli avec les informations fournies dans la conversation, 
     "confiance": [0.54, 0.85, 0.95]
   },
   "Cell_2": {
-    "réponse": "438 499 9259",
+    "réponse": "38 499 9259",
     "confiance": [0.38, 0.38, 0.38, 0.05, 0.48, 0.12]
   },
   "Client 2- Residence au canada depuis_af_date": {
