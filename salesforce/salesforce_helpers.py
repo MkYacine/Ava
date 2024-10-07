@@ -19,7 +19,7 @@ def request_access_token_using_refresh_token(refresh_token):
         "grant_type": "refresh_token",
         "client_id": salesforce_credentials['client_id'],
         "client_secret": salesforce_credentials['client_secret'],
-        "refresh_token": refresh_token
+        "refresh_token": salesforce_credentials['refresh_token']
     }
     response = requests.post(salesforce_credentials['token_url'], data=token_data)
     if response.status_code == 200:
