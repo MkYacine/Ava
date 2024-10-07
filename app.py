@@ -1,5 +1,6 @@
 import streamlit as st
 from transcribe.transcribe import *
+from salesforce.salesforce_helpers import *
 from google.oauth2 import service_account
 from twiliohelpers.twilio_handlers import twilio_client
 from gcs.gcs_handlers import check_gcs_permissions, get_latest_gcs_files, process_and_upload_audio
@@ -35,11 +36,26 @@ credentials_dict = {
 
 credentials = service_account.Credentials.from_service_account_info(credentials_dict)
 
+
+
+salesforce_credentials = {
+    "client_id": os.getenv("SF_CLIENT_ID"),
+    "client_secret": os.getenv("SF_CLIENT_SECRET"),
+    "redirect_uri": os.getenv("SF_REDIRECT_URI"),
+    "auth_url": os.getenv("SF_AUTH_URL"),
+    "token_url": os.getenv("SF_TOKEN_URL"),
+    "security_token": os.getenv("SF_SECURITY_TOKEN"),
+    "instance_url": os.getenv("SF_INSTANCE_URL"),
+    "refresh_token": os.getenv("SF_REFRESH_TOKEN")#no need for this later if we use auth link and get auth code redirect later on       
+}
+
+
+
 def initialize_session_state():
     # Initialize transcription_results
     transcription_files = [
-        'logs/logs_20241004_181841.json',
-        'logs/logs_20241004_181540.json'
+        'docs/logs_20241004_181841.json',
+        'docs/logs_20241004_181540.json'
     ]
     if 'transcription_results' not in st.session_state:
         st.session_state.transcription_results = []
@@ -84,6 +100,9 @@ def initialize_session_state():
     if 'recordings' not in st.session_state:
         st.session_state.recordings = []
 
+    if 'generated_text_summary' not in st.session_state:
+        with open('docs/ai_summary.txt', 'r') as f:
+            st.session_state.generated_text_summary = f.read()
 # Call this function at the start of your app
 initialize_session_state()
 
@@ -91,26 +110,27 @@ if check_password():
     # Streamlit Application
     st.title("Speech-to-Text Transcription and Call Management")
 
-    # Twilio Call Section
-    st.header("Make a call and transcribe")
-    forward_number = st.text_input("Enter the intermediate number (e.g., +1234567890)")
-    to_number = st.text_input("Enter the final recipient's number (e.g., +1234567890)")
-
-    if st.button("Make a call"):
-        if forward_number and to_number:
-            try:
-                response = requests.post(f"{os.getenv('NGROK_URL')}/make_call", 
-                                         json={"forward_number": forward_number, "to_number": to_number})
-                if response.status_code == 200:
-                    call_data = response.json()
-                    st.success(f"Call initiated. SID: {call_data['sid']}")
-                else:
-                    st.error(f"Error during call: {response.text}")
-            except Exception as e:
-                st.error(f"Error during call: {str(e)}")
-        else:
-            st.warning("Please enter both phone numbers")
-
+        # Twilio Call Section
+    with st.sidebar:
+        # Twilio Call Section
+        st.header("Make a call and transcribe")
+        forward_number = st.text_input("Enter the intermediate number (e.g., +1234567890)")
+        to_number = st.text_input("Enter the final recipient's number (e.g., +1234567890)")
+        
+        if st.button("Faire un appel"):
+            if forward_number and to_number:
+                try:
+                    response = requests.post(f"{os.getenv('NGROK_URL')}/make_call", 
+                                             json={"forward_number": forward_number, "to_number": to_number})
+                    if response.status_code == 200:
+                        call_data = response.json()
+                        st.success(f"Appel initié. SID: {call_data['sid']}")
+                    else:
+                        st.error(f"Erreur lors de l'appel: {response.text}")
+                except Exception as e:
+                    st.error(f"Erreur lors de l'appel: {str(e)}")
+            else:
+                st.warning("Veuillez entrer les deux numéros de téléphone")
     # Section to get and process recordings
     st.header("Process recordings")
     if st.button("Fetch latest 5 recordings"):
@@ -241,7 +261,6 @@ if check_password():
             # Update the session state with the AI response
             st.session_state.conf_form = extract_form_with_confidence(generated_text)
             st.session_state.cleaned_form = extract_form_without_confidence(st.session_state.conf_form)
-            
             # Display info message
             st.info("AI response generated successfully!")
 
@@ -256,38 +275,7 @@ if check_password():
         except Exception as e:
             st.error(f"An error occurred while generating the AI response: {str(e)}")
 
-    if st.button("Generate summary"):
-        try:
-            # Initialize Anthropic client
-            anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-            # Send request to Anthropic API using the Messages API
-            response = anthropic_client.messages.create(
-                model="claude-3-5-sonnet-20240620",
-                max_tokens=8192,
-                messages=[
-                    {"role": "user", "content": summary_prompt}
-                ]
-            )
-
-            # Get the generated text
-            generated_text_summary = response.content[0].text
-
-            # Display info message
-            st.info("AI summary generated successfully!")
-            st.subheader("AI Generated Summary:")
-            st.text_area("Contenu:", value=generated_text_summary, height=300, disabled=True)
-
-            # Offer download of generated text
-            st.download_button(
-                label="Download Summary",
-                data=generated_text_summary.encode("utf-8"),
-                file_name="summary.txt",
-                mime="text/plain"
-            )
-
-        except Exception as e:
-            st.error(f"An error occurred while generating the AI response: {str(e)}")
-
+   
     # New section for form validation
     st.header("Validate Form")
 
@@ -301,7 +289,7 @@ if check_password():
 
     # Display the form and allow editing
     if st.session_state.cleaned_form:
-        st.subheader("Cleaned Form:")
+        #st.subheader("Cleaned Form:")
         issue_messages = [issue[0] for issue in st.session_state.issues]        
         for key, value in st.session_state.cleaned_form.items():
             highlighted_value = value
@@ -309,7 +297,7 @@ if check_password():
                 if key in issue:
                     pattern = re.escape(value)
                     highlighted_value = re.sub(pattern, f'<span style="background-color: #FFCCCB;">{value}</span>', highlighted_value)
-            st.markdown(f"**{key}**: {highlighted_value}", unsafe_allow_html=True)
+            #st.markdown(f"**{key}**: {highlighted_value}", unsafe_allow_html=True)
 
         # Display issues and allow editing
         if st.session_state.issues:
@@ -366,3 +354,48 @@ if check_password():
 
             except Exception as e:
                 st.error(f"An error occurred while generating the PDF: {str(e)}")
+
+
+    st.header("Salesforce Integration")
+    if st.button("Connect Salesforce"): 
+        access_token = request_access_token_using_refresh_token(salesforce_credentials['refresh_token'])
+        st.session_state['access_token'] = access_token  
+    if st.button("Generate summary"):
+        try:
+            # Initialize Anthropic client
+            anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+            # Send request to Anthropic API using the Messages API
+            response = anthropic_client.messages.create(
+                model="claude-3-5-sonnet-20240620",
+                max_tokens=8192,
+                messages=[
+                    {"role": "user", "content": summary_prompt}
+                ]
+            )
+
+            # Get the generated text
+            generated_text_summary = response.content[0].text
+            st.session_state.generated_text_summary = generated_text_summary
+            # Display info message
+            st.info("AI summary generated successfully!")
+            st.subheader("AI Generated Summary:")
+            st.text_area("Contenu:", value=generated_text_summary, height=300, disabled=True)
+
+            # Offer download of generated text
+            st.download_button(
+                label="Download Summary",
+                data=generated_text_summary.encode("utf-8"),
+                file_name="summary.txt",
+                mime="text/plain"
+            )
+
+        except Exception as e:
+            st.error(f"An error occurred while generating the AI response: {str(e)}")
+
+    if st.button("Send  to Salesforce"):
+        if 'access_token' in st.session_state:
+            access_token = st.session_state['access_token']
+            account_id = create_account(access_token, salesforce_credentials['instance_url'])
+            opportunity_id = create_opportunity(access_token, account_id, salesforce_credentials['instance_url'])
+            add_note_to_account(access_token, account_id, salesforce_credentials['instance_url'])
+            upload_file_to_account(access_token, "docs/filled_form.pdf", account_id, salesforce_credentials['instance_url'])  
