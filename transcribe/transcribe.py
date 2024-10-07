@@ -2,6 +2,7 @@ from google.cloud import speech
 from pydub import AudioSegment
 import os
 import json
+from datetime import datetime
 
 
 def split_stereo(input_path, output_path_left, output_path_right):
@@ -130,11 +131,18 @@ def transcribe_gcs_large(gcs_uri, credentials):
             ]
         }
         
-        with open("raw_speech_to_text_output.txt", "w") as f:
-            json.dump(raw_response_dict, f, indent=2)
+        # Create logs directory if it doesn't exist
+        os.makedirs("logs", exist_ok=True)
         
-        print("Raw Speech-to-Text Response:")
-        print(json.dumps(raw_response_dict, indent=2))
+        # Generate filename with current date and time
+        current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_filename = f"logs/logs_{current_datetime}.json"
+        
+        # Write raw response to file
+        with open(log_filename, "w", encoding="utf-8") as f:
+            json.dump(raw_response_dict, f, indent=2, ensure_ascii=False)
+        
+        print(f"Raw Speech-to-Text Response written to: {log_filename}")
     except Exception as e:
         print(f"Error while processing raw response: {str(e)}")
         print("Falling back to basic response structure:")
@@ -152,60 +160,68 @@ def transcribe_gcs_large(gcs_uri, credentials):
         }
         print(json.dumps(basic_response, indent=2))
 
-    # Collect the transcript and timing information
-    transcript = ""
-    for result in response.results:
-        alternative = result.alternatives[0]
-        
-        # Add word-level timing information and confidence
-        for word_info in alternative.words:
-            word = word_info.word
-            start_time = word_info.start_time.total_seconds()
-            confidence = word_info.confidence
-            transcript += f"Word: {word}, Start: {start_time:.2f}s, Confidence: {confidence:.2f}\n"
-        
-        transcript += "\n"  # Add a blank line between utterances
 
-    return transcript
+    return raw_response_dict
 
-def rearrange_conversation(caller_transcript, receiver_transcript):
-    # Combine both transcripts
-    combined_transcript = []
-    for line in caller_transcript.split('\n'):
-        if line.startswith('Word:'):
-            parts = line.split(', ')
-            word = parts[0].split(': ')[1]
-            start = float(parts[1].split(': ')[1][:-1])
-            confidence = float(parts[2].split(': ')[1])
-            combined_transcript.append(('Caller', word, start, confidence))
-    for line in receiver_transcript.split('\n'):
-        if line.startswith('Word:'):
-            parts = line.split(', ')
-            word = parts[0].split(': ')[1]
-            start = float(parts[1].split(': ')[1][:-1])
-            confidence = float(parts[2].split(': ')[1])
-            combined_transcript.append(('Receiver', word, start, confidence))
+def rearrange_conversation(raw_caller_transcript, raw_receiver_transcript):
+    def parse_transcript(transcript):
+        parsed = []
+        for result in transcript['results']:
+            for alternative in result['alternatives']:
+                for word_info in alternative['words']:
+                    parsed.append({
+                        'word': word_info['word'],
+                        'start_time': word_info['start_time'],
+                        'end_time': word_info['end_time'],
+                        'confidence': word_info['confidence']
+                    })
+        return parsed
 
-    # Sort the combined transcript by start time
-    combined_transcript.sort(key=lambda x: x[2])
+    def add_utterance(speaker, utterance, conversation):
+        if utterance:
+            words = ' '.join(word['word'] for word in utterance)
+            confidence = ' '.join(f"{word['confidence']:.2f}" for word in utterance)
+            conversation.append(f"{speaker}: {words}")
+            conversation.append(f"Confidence: {confidence}")
 
-    # Rearrange into conversation format
+    caller_transcript = parse_transcript(raw_caller_transcript)
+    receiver_transcript = parse_transcript(raw_receiver_transcript)
+
     conversation = []
-    current_speaker = None
-    current_utterance = []
+    caller_ptr, receiver_ptr = 0, 0
+    current_speaker = 'Caller'
+    utterances = {'Caller': [], 'Receiver': []}
+    cutoff_threshold = 0.2  # 200 ms
 
-    for speaker, word, _, confidence in combined_transcript:
-        if speaker != current_speaker:
-            if current_utterance:
-                conversation.append(f"{current_speaker}: {' '.join(word for word, _ in current_utterance)}")
-                conversation.append(f"Confidence: {' '.join(f'{conf:.2f}' for _, conf in current_utterance)}")
-                current_utterance = []
-            current_speaker = speaker
-        current_utterance.append((word, confidence))
+    while caller_ptr < len(caller_transcript) and receiver_ptr < len(receiver_transcript):
+        caller_word = caller_transcript[caller_ptr]
+        receiver_word = receiver_transcript[receiver_ptr]
+        
+        if caller_word['start_time'] < receiver_word['start_time']:
+            next_speaker = 'Caller'
+            utterances[next_speaker].append(caller_word)
+            caller_ptr += 1
+        else:
+            next_speaker = 'Receiver'
+            utterances[next_speaker].append(receiver_word)
+            receiver_ptr += 1
 
-    # Add the last utterance
-    if current_utterance:
-        conversation.append(f"{current_speaker}: {' '.join(word for word, _ in current_utterance)}")
-        conversation.append(f"Confidence: {' '.join(f'{conf:.2f}' for _, conf in current_utterance)}")
+        if current_speaker != next_speaker:
+            current_transcript = caller_transcript if current_speaker == 'Caller' else receiver_transcript
+            current_ptr = caller_ptr if current_speaker == 'Caller' else receiver_ptr
+
+            if current_ptr < len(current_transcript) and \
+               current_transcript[current_ptr]['start_time'] - current_transcript[current_ptr-1]['end_time'] > cutoff_threshold:
+                add_utterance(current_speaker, utterances[current_speaker], conversation)
+                utterances[current_speaker] = []
+                current_speaker = next_speaker
+
+    # Add any remaining words from the longer transcript
+    remaining_speaker = 'Caller' if caller_ptr < len(caller_transcript) else 'Receiver'
+    remaining_transcript = caller_transcript if remaining_speaker == 'Caller' else receiver_transcript
+    remaining_ptr = caller_ptr if remaining_speaker == 'Caller' else receiver_ptr
+
+    utterances[remaining_speaker].extend(remaining_transcript[remaining_ptr:])
+    add_utterance(remaining_speaker, utterances[remaining_speaker], conversation)
 
     return '\n'.join(conversation)

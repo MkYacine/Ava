@@ -1,0 +1,220 @@
+Voici le formulaire rempli avec les informations fournies dans la conversation, incluant les niveaux de confiance pour chaque réponse:
+
+{
+  "Prénom_client1": {
+    "réponse": "Rayane",
+    "confiance": [0.88, 0.75, 0.98, 0.86, 0.88, 0.93]
+  },
+  "Nom_client1": {
+    "réponse": "Bouslama",
+    "confiance": [0.80, 0.99, 0.79, 0.84, 0.83, 0.36]
+  },
+  "Date de naissance client 1": {
+    "réponse": "8 juillet 2002",
+    "confiance": [0.97, 0.96, 0.95]
+  },
+  "Telephone_client_1": {
+    "réponse": "438 366 92 59",
+    "confiance": [0.70, 0.42, 0.02, 0.03]
+  },
+  "Adresse_client_1": {
+    "réponse": "1194 rue relant",
+    "confiance": [0.88, 0.83, 0.13, 0.32]
+  },
+  "Ville_client_1": {
+    "réponse": "Verdun",
+    "confiance": [0.96, 0.97]
+  },
+  "Revenu_brut_client1": {
+    "réponse": "60000",
+    "confiance": [0.34]
+  },
+  "Emploi-Poste-client-1": {
+    "réponse": "conseiller en sécurité financière",
+    "confiance": [0.98, 1.00, 1.00, 0.99]
+  },
+  "Employeur-client-1": {
+    "réponse": "Industrielle Alliance",
+    "confiance": [0.64, 0.91]
+  },
+  "Emploi Depuis - client_1": {
+    "réponse": "août 2024",
+    "confiance": [0.87, 0.95]
+  },
+  "Prénom_client2": {
+    "réponse": "Anna",
+    "confiance": [0.53, 0.19]
+  },
+  "Nom_client2": {
+    "réponse": "Polina",
+    "confiance": [0.53, 0.19]
+  },
+  "date de naissance client 2": {
+    "réponse": "premier décembre 1998",
+    "confiance": [0.54, 0.85, 0.95]
+  },
+  "Cell_2": {
+    "réponse": "38 499 9259",
+    "confiance": [0.38, 0.38, 0.38, 0.05, 0.48, 0.12]
+  },
+  "Client 2- Residence au canada depuis_af_date": {
+    "réponse": "2017",
+    "confiance": [0.78]
+  },
+  "Client 2-Case Non-Fume du tabac ?": {
+    "réponse": "Oui",
+    "confiance": [0.67]
+  },
+  "Client 2-Courriel (personnel)": {
+    "réponse": "anna.polina@gmail.com",
+    "confiance": [0.29, 0.92, 0.06, 0.98, 0.98]
+  },
+  "Client 2-Etat civil": {
+    "réponse": "Mariée",
+    "confiance": [0.76, 0.89]
+  },
+  "date de naissance enfant 1": {
+    "réponse": "5 juillet 2010",
+    "confiance": [0.95, 0.93, 0.99, 0.67]
+  },
+  "Enfant 2- prenom": {
+    "réponse": "Ryan",
+    "confiance": [0.32]
+  },
+  "Enfant 2- nom": {
+    "réponse": "besichi",
+    "confiance": [0.06]
+  },
+  "objectif famille-ach": {
+    "réponse": "Oui",
+    "confiance": [0.89]
+  },
+  "objectif famille-Financer les études des enfants": {
+    "réponse": "Oui",
+    "confiance": [0.80, 0.88, 0.51]
+  },
+  "objectif travail - Changer de carrière": {
+    "réponse": "Oui, éventuellement",
+    "confiance": [0.76, 0.81]
+  },
+  "objectif travail - Obtenir une promotion": {
+    "réponse": "Oui",
+    "confiance": [0.53, 0.96, 0.88]
+  },
+  "objectif finances : Acheter/vendre une propriété": {
+    "réponse": "Oui, dans 2-3 ans",
+    "confiance": [0.64, 0.64, 0.82, 0.55, 0.62, 0.61, 0.78, 0.78]
+  },
+  "objectif finances : Constituer un fonds d'urgence (3-6 mois, 1 an)": {
+    "réponse": "Oui",
+    "confiance": [0.88, 0.93, 0.98, 0.97, 0.56, 0.80, 0.78, 0.65]
+  },
+  "objectif finances : Maximiser fiscalement les revenus de placement": {
+    "réponse": "Oui",
+    "confiance": [0.79, 0.69, 0.69]
+  },
+  "Retraite - Rester à domicile le plus longtemps possible": {
+    "réponse": "Oui",
+    "confiance": [0.91, 0.83, 0.59, 0.58, 0.58, 0.86]
+  },
+  "CELI  Institution-client2": {
+    "réponse": "Alliance",
+    "confiance": [0.52]
+  },
+  "Valeur-celi-client2": {
+    "réponse": "6000",
+    "confiance": [0.47]
+  },
+  "Type CPG Fonds etc-client2": {
+    "réponse": "Fonds commun",
+    "confiance": [0.24, 0.24, 0.71]
+  },
+  "vehicule1client 1 - valeur": {
+    "réponse": "24000",
+    "confiance": [0.86, 0.36]
+  },
+  "residence secondaire-valeur client 1": {
+    "réponse": "250000",
+    "confiance": [0.11]
+  },
+  "PBR residence secondaire -client1": {
+    "réponse": "150000",
+    "confiance": [0.28]
+  },
+  "actif non enregistré -client2": {
+    "réponse": "Carte de crédit",
+    "confiance": [0.91, 0.99, 0.99]
+  },
+  "actif non enregistré -client2-Valeur": {
+    "réponse": "400",
+    "confiance": [0.42]
+  },
+  "actif non enregistré -client2-Institution": {
+    "réponse": "Desjardins",
+    "confiance": [0.97, 0.91]
+  },
+  "actif non enregistré 2client2": {
+    "réponse": "Marge de crédit",
+    "confiance": [0.99, 0.99]
+  },
+  "actif non enregistré2-client2-Valeur": {
+    "réponse": "10000",
+    "confiance": [0.01]
+  },
+  "actif non enregistré2-client2-Institution": {
+    "réponse": "Desjardins",
+    "confiance": [0.99, 0.96]
+  },
+  "Hypothèque 2  Solde": {
+    "réponse": "100000",
+    "confiance": [0.67, 0.76, 0.90, 0.90]
+  },
+  "Hypothèque 2  Paiement": {
+    "réponse": "2000",
+    "confiance": [0.88, 0.45]
+  },
+  "Hypothèque 2 Taux": {
+    "réponse": "6.5",
+    "confiance": [0.68, 0.71, 0.05]
+  },
+  "Hypothèque 2  Amortissement restant": {
+    "réponse": "2 ans",
+    "confiance": [0.79, 0.88]
+  },
+  "Carte de crédit 2 Paiement": {
+    "réponse": "14",
+    "confiance": [0.40]
+  },
+  "Carte de crédit 2 solde": {
+    "réponse": "400",
+    "confiance": [0.89, 0.64, 0.49, 0.39]
+  },
+  "Marge de crédit 2  Paiement": {
+    "réponse": "400",
+    "confiance": [0.48]
+  },
+  "Marge de crédit 2  Solde": {
+    "réponse": "10000",
+    "confiance": [0.01]
+  },
+  "Fonds de pension à cotisations déterminées-client2-employeur": {
+    "réponse": "Industrielle Alliance",
+    "confiance": [0.64, 0.91]
+  },
+  "Fonds de pension à cotisations déterminées-client2- %employé": {
+    "réponse": "70",
+    "confiance": [0.45, 0.95, 0.95, 0.98]
+  }
+}
+
+Points d'incohérence ou d'ambiguïté :
+
+1. Il y a une confusion sur l'état civil du client. Au début, il est mentionné comme célibataire, mais plus tard il est question d'une conjointe.
+
+2. La date d'embauche mentionnée (août 2024) semble être dans le futur, ce qui est probablement une erreur.
+
+3. Les informations sur l'enfant sont contradictoires. Il est d'abord dit qu'il n'y a pas d'enfant à charge, puis un enfant est mentionné plus tard.
+
+4. Certaines valeurs ont des niveaux de confiance très bas, comme la valeur de la marge de crédit (0.01), ce qui pourrait indiquer une erreur de transcription.
+
+5. Il y a des incohérences dans les informations sur la résidence principale. Il est d'abord dit que le client vit en appartement, puis une maison avec hypothèque est mentionnée.
