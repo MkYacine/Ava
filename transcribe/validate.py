@@ -27,22 +27,6 @@ validation_rules = [
     )
 ]
 
-def extract_multiline_json(text: str) -> Dict[str, Any]:
-    json_match = re.search(r'(\{[\s\S]*\})', text)
-    if not json_match:
-        raise ValueError("No JSON object found in the text")
-    
-    json_str = json_match.group(1)
-    json_lines = [line for line in json_str.split('\n') if ':' in line or '{' in line or '}' in line]
-    cleaned_json_str = '\n'.join(json_lines)
-    cleaned_json_str = re.sub(r'(?<!\\)\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})', r'\\\\', cleaned_json_str)
-    
-    try:
-        return json.loads(cleaned_json_str)
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
-        return {}
-
 class AudioFinder:
     def __init__(self, logs: List[Dict[str, Any]], audios: List[AudioSegment]):
         self.logs = logs
@@ -97,14 +81,12 @@ class AudioFinder:
 
         return b''  # return empty bytes if no audio is found
 
-def validate_form(ai_response: str, logs: List[Dict[str, Any]], audios: List[AudioSegment]) -> Tuple[List[Tuple[str, bytes]], Dict[str, str]]:
-    form = extract_multiline_json(ai_response)
+def validate_form(form: Dict[str, any], logs: List[Dict[str, Any]], audios: List[AudioSegment]) -> Tuple[List[Tuple[str, bytes]], Dict[str, str]]:
     audio_finder = AudioFinder(logs, audios)
     issues = []
-    cleaned_form = {}
+    
 
     for key, value in form.items():
-        cleaned_form[key] = value['réponse']
         confidence = value['confiance']
 
         # Check for uncertainties
@@ -118,4 +100,4 @@ def validate_form(ai_response: str, logs: List[Dict[str, Any]], audios: List[Aud
                 audio = audio_finder.get_audio_segment(value['réponse'])
                 issues.append((f"{key} {rule.msg}: {value['réponse']}", audio))
 
-    return issues, cleaned_form
+    return issues
