@@ -5,3 +5,13 @@ __pycache__/
 exca-venv/
 
 .env
+
+.ipynb_checkpoints
+
+.virtual_documents
+
+*.ipynb
+
+kaggle
+
+temp.py
