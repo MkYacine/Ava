@@ -302,19 +302,17 @@ if check_password():
         try:
             data_dict = st.session_state.cleaned_form
             input_pdf_path = "docs/form.pdf"
-            output_pdf_path = "docs/filled_form.pdf"
-            fill_and_flatten_pdf(input_pdf_path, data_dict, output_pdf_path)
+            pdfbytes = fill_and_flatten_pdf(input_pdf_path, data_dict)
             st.success("PDF generated successfully!")
             logger.log_text("PDF generated successfully", severity='INFO')
             
             # Add download button for the generated PDF
-            with open(output_pdf_path, "rb") as file:
-                btn = st.download_button(
-                    label="Download PDF",
-                    data=file,
-                    file_name="filled_form.pdf",
-                    mime="application/pdf"
-                )
+            btn = st.download_button(
+                        label="Download PDF",
+                        data=pdfbytes,  # Utiliser pdfbytes directement
+                        file_name="filled_form.pdf",
+                        mime="application/pdf"
+                    )
             
             st.session_state.pipeline_stage = 'salesforce_integration'
         except Exception as e:
@@ -352,7 +350,7 @@ if check_password():
             opportunity_id = create_opportunity(access_token, account_id, salesforce_credentials['instance_url'])
             logger.log_text(f"Salesforce opportunity created. ID: {opportunity_id}", severity='INFO')
             add_note_to_account(access_token, account_id, salesforce_credentials['instance_url'])
-            upload_file_to_account(access_token, "docs/filled_form.pdf", account_id, salesforce_credentials['instance_url'])
+            upload_file_to_account(access_token,pdfbytes, account_id, salesforce_credentials['instance_url'])
             
             st.success("Data sent to Salesforce successfully!")
             st.session_state.pipeline_stage = 'complete'

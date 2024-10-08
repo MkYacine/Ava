@@ -4,7 +4,7 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 
 
-def fill_and_flatten_pdf(input_pdf_path, data_dict, output_pdf_path):
+def fill_and_flatten_pdf(input_pdf_path, data_dict):
     # Lire le PDF modèle
     template_pdf = PdfReader(input_pdf_path)
     
@@ -67,9 +67,11 @@ def fill_and_flatten_pdf(input_pdf_path, data_dict, output_pdf_path):
         # Supprimer les champs de formulaire de la page
         page.Annots = []
 
-    # Écrire le PDF rempli et aplati
-    PdfWriter().write(output_pdf_path, template_pdf)
-    print("Le PDF rempli et aplati a été enregistré.")
+    # Retourner le PDF rempli et aplati sous forme de bytes
+    output_pdf_bytes = BytesIO()
+    PdfWriter().write(output_pdf_bytes, template_pdf)
+    output_pdf_bytes.seek(0)  # Revenir au début du buffer
+    return output_pdf_bytes.getvalue()  #
 
 # Appeler la fonction pour remplir et aplatir le PDF
 #fill_and_flatten_pdf(template_path, data, output_path)

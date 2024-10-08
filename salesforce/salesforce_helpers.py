@@ -87,31 +87,29 @@ def add_note_to_account(access_token, account_id, instance_url):
     else:
         st.error(f"Failed to add note: {response.text}")
         return None
-def upload_file_to_account(access_token, file_path, account_id, instance_url):
+def upload_file_to_account(access_token, pdfbytes, account_id, instance_url):
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
     
-    with open(file_path, 'rb') as f:
-        file_data = f.read()
-        base64_file_data = base64.b64encode(file_data).decode('utf-8')
-        
-        content_version_data = {
-            'Title': os.path.basename(file_path),
-            'PathOnClient': os.path.basename(file_path),
-            'VersionData': base64_file_data,
-            'FirstPublishLocationId': account_id
-        }
-        
-        content_version_url = f"{instance_url}/services/data/v60.0/sobjects/ContentVersion/"
-        
-        response = requests.post(content_version_url, headers=headers, json=content_version_data)
-        if response.status_code == 201:
-            content_version_id = response.json()['id']
-            st.success(f"File uploaded successfully! ContentVersion ID: {content_version_id}")
-        else:
-            st.error(f"Failed to upload file: {response.text}")
+    base64_file_data = base64.b64encode(pdfbytes).decode('utf-8')
+
+    content_version_data = {
+        'Title': "filled_form.pdf", 
+        'PathOnClient': "filled_form.pdf",
+        'VersionData': base64_file_data,
+        'FirstPublishLocationId': account_id
+    }
+    
+    content_version_url = f"{instance_url}/services/data/v60.0/sobjects/ContentVersion/"
+    
+    response = requests.post(content_version_url, headers=headers, json=content_version_data)
+    if response.status_code == 201:
+        content_version_id = response.json()['id']
+        st.success(f"File uploaded successfully! ContentVersion ID: {content_version_id}")
+    else:
+        st.error(f"Failed to upload file: {response.text}")
 
 
 #helpers function to get details from json file 
