@@ -15,3 +15,5 @@ exca-venv/
 kaggle
 
 temp.py
+
+logs/
