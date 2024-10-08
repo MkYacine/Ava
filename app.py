@@ -156,7 +156,7 @@ if check_password():
                     break
                 else:
                     st.error("Failed to download the recording.")
-                    logger.log_text("Failed to download the recording", severity='ERROR')
+                    logger.log_text(f"Failed to download the recording {response}", severity='ERROR')
                     break
             else:
                 attempt += 1
