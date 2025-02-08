@@ -197,10 +197,42 @@ if check_password():
                 st.session_state.conversation = rearrange_conversation(caller_transcript, receiver_transcript)
                 logger.log_text("Conversation rearranged successfully", severity='INFO')
                 logger.log_text(f"Rearranged conversation: {st.session_state.conversation}", severity='DEBUG')
-                st.session_state.pipeline_stage = 'generate_ai_response'
+                
+                # Add download button for transcript
+                st.download_button(
+                    label="Download Transcript",
+                    data=st.session_state.conversation,
+                    file_name="transcript.txt",
+                    mime="text/plain"
+                )
+                
+                # Add button to proceed to upload stage
+                if st.button("Proceed to Analysis"):
+                    st.session_state.pipeline_stage = 'upload_transcript'
+                    st.rerun()
         else:
             st.warning("Waiting for audio files to be processed...")
             logger.log_text("Waiting for audio files to be processed...", severity='WARNING')
+
+    # New upload stage
+    if st.session_state.pipeline_stage == 'upload_transcript':
+        st.header("Upload Transcript for Analysis")
+        logger.log_text("Starting transcript upload stage", severity='INFO')
+        
+        uploaded_file = st.file_uploader("Upload transcript file", type=['txt'])
+        
+        if uploaded_file is not None:
+            try:
+                st.session_state.conversation = uploaded_file.getvalue().decode('utf-8')
+                logger.log_text("Transcript uploaded successfully", severity='INFO')
+                
+                if st.button("Start Analysis"):
+                    st.session_state.pipeline_stage = 'generate_ai_response'
+                    st.rerun()
+            except Exception as e:
+                error_msg = f"Error processing uploaded file: {str(e)}"
+                st.error(error_msg)
+                logger.log_text(error_msg, severity='ERROR')
 
     if st.session_state.pipeline_stage == 'generate_ai_response':
         st.header("Generating AI Response")
