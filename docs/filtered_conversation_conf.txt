@@ -1,0 +1,420 @@
+Caller: allô
+Confidence: 0.86
+Receiver: oui allô allô oui vous m'entendez bien
+Confidence: 0.88 0.96 0.97 0.97 1.00 0.93 0.98
+Caller: oui bonjour monsieur Benjamin comment allez-vous
+Confidence: 0.99 0.99 1.00 0.92 1.00 0.99
+Receiver: super et vous
+Confidence: 1.00 0.98 0.98
+Caller: je vais très bien merci et vous m'entendez bien
+Confidence: 0.68 0.87 0.81 0.99 0.97 0.33 0.99 0.96 1.00
+Receiver: oui super
+Confidence: 0.81 0.98
+Caller: ah bon c'est parfait vous avez passé une bonne journée monsieur
+Confidence: 0.42 0.97 0.89 0.99 0.90 0.90 0.98 1.00 1.00 1.00 0.99
+Receiver: oui ça va un bon début de journée et vous
+Confidence: 0.92 0.99 0.99 0.95 0.95 0.94 0.99 0.99 0.99 0.99
+Caller: très bon début de journée comme ils peuvent aller hein parfait donc aujourd'hui monsieur comme je vous avais expliqué lors de notre dernier appel on va vraiment faire que nous on appelle un parcours financier d'accord c'est-à-dire que nous on va vraiment établir vous c'est quoi votre profil de clients c'est quoi vos objectifs est basé sur tout ce que vous vous nous dites on va vous établir un plan qui va en fait nous dire comment mieux vous protéger et comment mieux atteindre vos objectifs
+Confidence: 0.95 0.73 0.95 0.97 0.97 0.99 0.98 0.97 0.98 0.41 0.66 0.89 0.99 0.94 0.95 0.93 0.93 0.92 0.99 0.98 0.95 1.00 0.99 0.97 0.98 0.98 1.00 0.99 0.97 0.93 0.92 0.97 0.96 0.97 0.98 0.99 0.97 0.97 0.91 0.93 0.96 0.99 0.95 0.89 0.91 0.99 0.99 0.99 0.85 0.75 0.90 0.90 0.94 0.69 0.93 0.92 0.82 0.94 0.99 0.99 0.91 0.94 0.96 0.95 0.86 0.93 0.98 0.94 0.98 0.89 0.96 0.96 0.99 0.99 0.99 0.97 0.96 0.97 1.00 1.00 0.98 0.80 0.97 0.94 0.94 0.90
+Receiver: ok d'accord parfait
+Confidence: 0.82 0.99 0.92
+Caller: donc c'est tout ça c'est correct pour vous
+Confidence: 0.89 0.93 0.95 0.93 0.90 0.98 0.98 1.00
+Receiver: oui
+Confidence: 0.85
+Caller: parfait monsieur donc je vais juste commencer par votre prénom
+Confidence: 0.87 0.99 0.99 0.99 0.99 0.99 0.99 1.00 0.99 0.99
+Receiver: oui bien sûr c'est Benjamin et Groo et Groo c'est EGR e t a u D
+Confidence: 0.51 0.99 0.97 0.86 0.92 0.74 0.39 0.72 0.36 0.92 0.19 0.38 0.82 0.60 0.25 0.86
+Caller: c'est a u d ego c'est ça
+Confidence: 0.56 0.67 0.30 0.20 0.26 0.98 0.92
+Receiver: oui oui c'est ça
+Confidence: 0.83 0.94 0.99 0.99
+Caller: ah EGR e t a u D
+Confidence: 0.70 0.21 0.61 0.38 0.57 0.33 0.86
+Receiver: exactement
+Confidence: 0.89
+Caller: et ça c'est votre prénom ou votre nom de famille
+Confidence: 0.88 0.99 0.98 1.00 0.97 0.59 0.59 0.99 0.94 0.94
+Receiver: c'est mon nom de famille le prénom c'est Benjamin
+Confidence: 0.25 0.96 0.96 0.99 0.99 1.00 0.99 0.77 0.95
+Caller: comment on écrit ça
+Confidence: 0.96 0.96 0.96 0.98
+Receiver: B e n J a M i n
+Confidence: 0.86 0.92 0.65 0.65 0.62 0.60 0.38 0.89
+Caller: parfait monsieur quel est votre date de naissance
+Confidence: 0.95 0.99 0.51 0.97 0.99 0.99 1.00 1.00
+Receiver: c'est le 10 septembre 2003
+Confidence: 0.89 0.89 0.98 0.94 0.76
+Caller: 17 septembre 2003 parfait vous êtes un homme et en ce moment vous êtes célibataire mariée
+Confidence: 0.22 0.94 0.68 0.96 0.99 1.00 0.99 1.00 0.99 1.00 1.00 1.00 1.00 1.00 0.99 0.91
+Receiver: oui je suis célibataire
+Confidence: 0.76 0.93 0.93 0.99
+Caller: parfait et j'aurais besoin de votre email s'il vous plaît monsieur
+Confidence: 0.96 0.82 0.99 1.00 1.00 1.00 0.99 0.96 0.96 0.96 0.99
+Receiver: oui email bien sûr c'est benjamin.egroo@hec.ca
+Confidence: 0.26 0.43 0.94 0.92 0.88 0.21
+Caller: parfait monsieur vous êtes fumeur ou non fumeur
+Confidence: 0.89 0.90 1.00 1.00 0.63 0.68 0.88 0.71
+Receiver: je meurs occasionnellement mais je l'ai compté
+Confidence: 0.44 0.16 0.87 0.91 0.99 0.62 0.66
+Caller: et vous êtes arrivés ah parfait si jamais vous vous arrêtez de fumer pendant une période de 1 an vous pouvez m'appeler puis on pourrait euh changer votre tarification à une tarification non plus humain
+Confidence: 0.80 0.72 0.91 0.26 0.60 0.89 0.95 0.95 0.97 0.98 0.88 0.96 0.97 0.90 0.99 0.99 0.98 0.99 0.99 0.97 0.99 0.98 0.95 0.97 0.96 0.37 0.99 0.99 0.98 0.39 0.74 0.96 0.95 0.89 0.73
+Receiver: MHM ok ok d'accord ça tombe bien sur mes projets d'aller fumer
+Confidence: 0.51 0.57 0.87 0.98 0.99 0.96 0.89 0.94 0.87 0.75 0.48 0.71
+Caller: vous vous vous ah bon ben c'est c'est parfait à entendre hein on on en a tous besoin n'est-ce pas
+Confidence: 0.43 0.72 0.83 0.95 0.93 0.84 0.84 0.95 0.99 0.17 0.33 0.72 0.86 0.91 0.91 0.99 0.98 0.98 0.88 0.77
+Receiver: oui
+Confidence: 0.90
+Caller: vous monsieur vous vous résidez au Canada depuis quelle année
+Confidence: 0.69 0.93 0.75 0.86 0.91 0.99 0.99 0.99 0.99 0.99
+Receiver: euh depuis 2021
+Confidence: 0.74 0.99 0.99
+Caller: 2021 c'est parfait et vous votre numéro de téléphone cellulaire c'est quoi
+Confidence: 0.28 0.93 0.97 1.00 0.98 1.00 1.00 0.96 1.00 1.00 0.98 1.00
+Receiver: c'est le 438 409 6399
+Confidence: 0.84 0.84 0.89 0.62 0.25
+Caller: MHM parfait en ce moment c'est quoi votre adresse de résidence
+Confidence: 0.66 0.52 0.98 0.99 0.99 0.99 1.00 1.00 1.00 1.00 1.00
+Receiver: euh c'est le 498 2 place de la savane à Montréal
+Confidence: 0.75 0.89 1.00 0.49 0.56 0.98 0.99 0.99 1.00 0.83 0.92
+Caller: c'est là ça va donc euh le H4P euh 07 c'est bien ça parfait parfait monsieur est-ce que vous nous laissez vous envoyer des informations par email si jamais vous en avez besoin
+Confidence: 0.54 0.40 0.49 0.23 0.91 0.60 0.98 0.96 0.58 0.43 0.98 0.98 0.99 0.36 0.77 0.93 1.00 1.00 0.99 0.96 0.61 0.99 0.99 1.00 0.98 1.00 0.98 0.99 1.00 1.00 0.96 0.92 0.99
+Receiver: oui oui bien sûr
+Confidence: 0.88 0.82 0.97 0.97
+Caller: parfait monsieur donc maintenant on va parler un peu plus de vos objectifs monsieur donc on va on va commencer par l'objectif de famille ce serait quoi en terme d'objectif familial que vous aurez pour le futur
+Confidence: 0.92 0.70 0.92 0.88 0.76 0.76 0.90 0.99 0.99 0.97 0.99 0.98 0.99 1.00 0.99 0.90 0.90 0.96 0.96 1.00 0.98 1.00 0.72 0.97 0.66 0.98 0.91 0.70 0.70 0.89 0.96 1.00 0.99 0.92 0.97 1.00 0.96
+Receiver: ah c'est c'est une question assez assez difficile moi personnellement je je sais que je me verrais bien avoir plusieurs enfants plus tard il manque juste à trouver une femme mais dans un horizon oui dans dans 8 ans je crois que j'aimerais bien commencer à avoir des des enfants une famille assez nombreuse de trois à quatre enfants
+Confidence: 0.45 0.75 0.76 0.92 0.97 0.76 0.92 0.83 0.92 1.00 0.83 0.88 0.87 0.87 0.70 0.72 0.80 0.98 0.93 0.98 0.99 0.99 0.99 0.99 0.90 0.96 0.99 1.00 0.98 0.98 0.95 0.97 0.98 0.60 0.96 0.96 0.93 0.90 0.89 0.78 0.63 0.82 0.98 0.99 0.98 0.95 0.95 0.91 0.96 0.97 0.99 0.97 0.99 0.90 0.67 0.89 0.90 0.89 0.98
+Caller: oui d'accord d'accord trois à quatre enfants ah bon ben c'est parfait à entendre et pour vous monsieur quand vous dites avoir des enfants est-ce que est-ce que vous vous vous voulez acheter une propriété pour pouvoir les résider à l'intérieur ou
+Confidence: 0.46 0.90 0.97 0.75 0.59 0.89 0.93 0.95 0.97 0.51 0.99 0.99 0.68 0.83 0.97 0.98 0.63 0.99 0.83 0.83 0.97 0.99 0.99 1.00 0.98 0.98 1.00 1.00 0.86 0.91 0.93 0.96 0.98 0.97 0.99 0.99 0.99 0.96 0.93 0.97 0.97 0.99
+Receiver: MHM bah oui je je réfléchissais à ça à acheter une maison pour plus tard en ce moment je suis en appartement et bon c'est sympa quand on est étudiant mais je pense pour élever des enfants avoir une maison c'est quand même un meilleur cadre
+Confidence: 0.63 0.62 1.00 0.62 0.74 0.80 0.97 0.97 0.90 0.93 0.99 1.00 0.98 0.99 0.99 0.89 0.92 0.92 0.93 0.93 0.83 0.96 1.00 0.99 0.98 0.99 0.91 0.76 0.97 0.81 0.99 1.00 0.99 0.99 0.94 0.99 1.00 0.92 0.95 1.00 0.97 0.90 0.90 0.98 0.98 0.93
+Caller: MHM donc vous prévoyez acheter une maison dans le futur parfait et dites-moi monsieur euh quand vous aurez vos enfants est-ce que pour vous financer leurs études c'est quelque chose qui est important pour vous
+Confidence: 0.70 0.79 0.98 0.65 0.99 1.00 1.00 1.00 1.00 1.00 0.55 0.86 0.94 0.99 0.52 0.79 0.79 0.99 0.99 0.98 0.99 0.99 0.99 1.00 0.87 0.88 0.96 0.81 1.00 1.00 0.95 0.98 1.00 1.00 1.00
+Receiver: oui non oui bien évidemment je veux qu'il fasse les les meilleures écoles possibles
+Confidence: 0.85 0.17 0.81 0.64 1.00 0.90 0.87 0.97 0.93 0.86 0.94 0.93 0.97 0.99
+Caller: MHM parfait puis est-ce que euh en terme de famille il y aurait un projet spécial que je devrais prendre en note
+Confidence: 0.51 0.56 0.89 0.96 0.96 0.74 1.00 0.84 0.99 0.94 0.92 0.92 0.92 0.99 0.97 0.97 1.00 1.00 1.00 0.99 0.98 0.99
+Receiver: euh j'aimerais beaucoup euh aller faire ma pour plus tard ma ma mon mariage en poésie française c'est là d'où je viens et euh bon les tickets sont très très chers et les hôtels et cetera aussi ça c'est vraiment une chose qui qui me tient énormément à cœur de me marier là-bas du coup je sais que je il faut que je prenne ça dans dans mon budget entre guillemets
+Confidence: 0.36 0.99 0.99 0.66 0.77 0.90 0.66 0.93 0.97 0.97 0.86 0.88 0.95 0.98 0.85 0.97 0.95 0.97 0.96 0.89 0.94 0.94 0.94 0.81 0.91 0.95 0.93 0.95 0.96 0.95 0.91 0.96 0.95 0.95 0.97 0.91 0.99 0.89 0.90 0.99 0.97 0.98 0.82 0.90 0.85 0.77 0.93 0.93 0.81 0.73 0.89 0.98 0.95 0.93 0.93 0.90 0.85 0.94 0.87 0.66 0.66 0.92 0.92 0.97 0.94 0.90 0.93 0.91 0.99 0.93 0.94
+Caller: MHM d'accord je comprends parfait Monsieur Merci beaucoup donc là j'ai à peu près toutes les informations pour la partie objectif famille donc maintenant on va passer au au travail donc selon vous vous travaillez en tant que quoi Monsieur
+Confidence: 0.62 1.00 0.98 0.98 0.99 0.99 0.99 1.00 0.99 0.98 0.93 0.93 0.93 0.93 0.93 0.93 0.99 0.98 0.99 0.99 0.83 0.95 0.99 0.92 0.86 0.86 0.98 0.82 0.96 0.97 0.99 0.74 0.71 0.89 0.93 0.89 0.89 0.89 0.92 1.00
+Receiver: je suis avocat sur un dans un bureau qui est au vieux port j'ai commencé il y a 2 ans environ
+Confidence: 0.93 0.93 0.99 0.98 0.98 0.99 1.00 1.00 0.99 0.93 0.93 0.95 0.60 1.00 1.00 0.98 0.98 0.98 0.97 1.00 0.99
+Caller: d'accord il y a 2 ans environ et euh et vous vous vous prévoyez pas changer de carrière n'est-ce pas
+Confidence: 0.88 0.92 0.92 0.92 0.58 0.92 0.92 0.97 0.85 0.98 0.66 0.85 0.88 0.83 0.97 0.94 1.00 1.00 0.92 0.92
+Receiver: oui non j'aime beaucoup ce que je fais et je suis très ambitieux dans mon travail honnêtement je me verrais bien dans une dizaine d'années euh avec euh assez d'expérience et assez de de relation de d'ouvrir mon propre cabinet sûrement à Montréal encore
+Confidence: 0.42 0.85 0.94 0.94 0.98 0.98 1.00 1.00 0.98 1.00 1.00 1.00 0.91 0.96 0.96 1.00 0.84 1.00 1.00 0.99 0.99 0.99 0.99 1.00 0.92 0.41 0.99 0.69 0.93 0.98 0.66 0.91 0.70 0.78 0.90 0.87 0.97 0.99 1.00 0.96 0.91 0.98 0.98 0.98
+Caller: d'accord donc ouvrir votre propre cabinet d'avocat à Montréal
+Confidence: 0.98 0.97 0.98 0.98 0.94 0.99 0.97 0.97 0.96
+Receiver: c'est ça
+Confidence: 0.51 0.84
+Caller: vous m'avez dit dans une période de combien de temps
+Confidence: 0.63 0.70 0.89 1.00 1.00 1.00 0.95 1.00 1.00 1.00
+Receiver: dans environ 10 ans je pense 10 ans me semble objectif assez euh atteignable
+Confidence: 0.61 0.93 0.98 0.98 0.97 0.99 0.94 0.94 0.84 0.91 0.36 0.75 0.63 0.71
+Caller: MHM donc vous devriez vous devriez à accumuler du capital pour ça c'est ça
+Confidence: 0.48 0.95 0.98 1.00 0.97 0.99 0.61 0.97 1.00 1.00 0.99 0.99 0.98 0.99
+Receiver: oui du capital est beaucoup de de contacts de réseau c'est d'avoir un comment dire un portefeuille de clients euh fidèle surtout
+Confidence: 0.89 0.96 1.00 0.54 1.00 0.86 0.96 0.84 0.97 0.81 0.56 0.88 0.93 0.88 0.96 0.90 0.92 0.97 0.80 0.69 0.92 0.99
+Caller: ouais d'accord je comprends parfait donc on pourrait dire que obtenir une promotion à votre travail en tant qu'avocat c'était quelque chose qui vous tiendrait à cœur
+Confidence: 0.51 0.86 0.94 0.96 0.98 0.95 0.88 0.93 0.98 0.98 0.97 1.00 1.00 0.99 0.99 1.00 0.94 0.99 0.94 0.33 0.99 0.99 0.98 0.99 0.65 0.96 0.96
+Receiver: bien sûr oui oui énormément
+Confidence: 0.89 0.89 0.88 0.96 0.99
+Caller: parfait donc merci pour vos réponses est-ce qu'il y aurait un objectif personnalisé que vous voulez que j'ajoute pour la partie travail
+Confidence: 0.74 0.90 1.00 1.00 0.97 0.99 0.92 0.93 0.99 0.99 1.00 0.99 0.99 0.99 1.00 1.00 1.00 0.99 0.98 1.00 0.99 0.96
+Receiver: laissez-moi réfléchir non à part euh au niveau de donc vous m'avez professionnels à part de ce que j'aimerais bien ouvrir ma compagnie j'ai j'ai pas d'autre votre objectif c'est déjà un grand objectif je pense
+Confidence: 0.74 0.93 0.73 0.90 0.90 0.50 0.98 0.98 0.80 0.42 0.43 0.43 0.50 0.90 0.96 0.89 0.90 0.90 0.93 0.90 0.91 0.97 0.99 0.50 0.63 0.98 0.85 0.85 0.93 0.71 0.90 0.71 0.76 0.89 0.92 0.92
+Caller: parce que parfait merci Monsieur donc maintenant on va on va passer à la partie finance vous est-ce que vous avez des problèmes quand c'est on arrive aux impôts est-ce que vous avez des problèmes à épargner dites-moi en un peu plus
+Confidence: 0.24 0.24 0.27 0.42 0.98 0.95 0.96 0.93 0.82 0.96 0.91 0.98 0.98 1.00 0.96 0.71 0.98 1.00 1.00 0.98 0.95 0.97 0.99 0.96 0.93 0.98 1.00 0.97 0.98 0.99 0.99 0.97 0.96 0.97 0.99 0.92 0.96 0.99 0.65 0.99 0.99 0.98
+Receiver: et excusez-moi je n'ai pas bien entendu des problèmes à quoi
+Confidence: 0.31 0.84 0.96 0.96 0.96 0.86 0.99 0.96 0.99 0.81 0.69
+Caller: pour la partie finance est-ce que vous vous avez des problèmes à diminuer les impôts ou euh ou euh avec vos placements actuels ou votre méthode d'épargne actuelle
+Confidence: 0.88 0.99 0.99 0.93 1.00 1.00 0.76 0.98 0.99 0.98 1.00 0.99 1.00 1.00 0.97 0.96 0.53 0.92 0.44 1.00 0.99 0.92 0.96 0.90 0.97 1.00 0.98 0.69
+Receiver: euh je ne sais pas grand-chose d'optimisation fiscale j'ai juste un CDI où j'essaie d'investir de manière assez régulière chaque mois mais sinon je ne fais pas plus attention que ça je ne vais pas vous mentir je ne m'y connais pas beaucoup en comptabilité fiscale
+Confidence: 0.20 0.55 0.68 0.68 0.68 0.94 0.94 0.92 0.75 0.75 0.93 0.77 0.15 0.55 0.74 0.99 0.99 0.94 0.85 0.97 1.00 0.99 1.00 0.96 0.90 0.90 0.99 0.98 0.99 0.96 0.96 0.97 0.93 0.93 0.93 0.99 0.91 0.99 0.81 0.81 0.78 0.97 1.00 0.99 0.94 0.84
+Caller: ok d'accord je comprends et euh et quand vous me dites vous cotiser à chaque mois c'est combien que vous cotisez dans votre CDI votre CIA
+Confidence: 0.95 1.00 0.99 1.00 1.00 0.83 0.91 0.96 0.99 0.75 0.92 0.98 0.74 0.98 1.00 0.98 0.91 0.97 0.62 0.97 0.82 0.98 0.91 0.76 0.89 0.20
+Receiver: ah je vais pas vous mentir ce n'est pas ce n'est pas très récurrent j'oublie assez souvent de le faire mais c'est environ dans les 200 $ par mois euh je vous donnerai une fourchette ouais dans les 200 $ par mois environ
+Confidence: 0.26 0.92 0.89 0.97 0.89 0.95 0.94 0.94 0.94 0.94 0.98 0.98 1.00 0.97 0.83 0.93 0.99 0.99 1.00 1.00 0.99 0.97 0.99 0.98 0.98 0.96 0.98 0.99 0.89 0.87 0.97 0.99 0.95 0.99 0.99 0.74 0.97 0.95 0.95 0.94 0.99 0.94 0.96
+Caller: d'accord c'est parfait est-ce qu'il y aurait d'autres choses au niveau des finances que vous voulez en comprendre encore comme des dettes déplacement actuels une achat de propriété à fond d'urgence
+Confidence: 0.98 0.97 0.95 0.71 0.89 0.89 0.89 0.80 0.84 0.98 0.98 1.00 0.97 1.00 0.86 0.61 0.87 0.93 0.99 1.00 0.96 0.94 0.98 0.63 0.91 0.97 0.99 0.97 0.72 0.66 0.82
+Receiver: ben justement j'allais vous parler de ça moi j'ai fait un prêt étudiant euh on finit mes études je l'ai fait à la hauteur de 40000 euh de 40000 dollars
+Confidence: 0.73 1.00 0.91 0.99 0.98 0.94 0.94 0.99 0.97 0.88 0.86 0.40 0.85 0.91 0.53 0.67 0.99 0.98 1.00 0.93 0.83 0.85 0.85 0.85 0.97 0.82 0.92 0.78 0.64 0.49
+Caller: OK après de combien MHM
+Confidence: 0.46 0.54 0.73 0.90 0.55
+Receiver: sur 5 ans et je l'ai mentionné d'environ 500 euh 500$ qui vont commande bah qui ont commencé
+Confidence: 0.85 0.89 0.99 0.71 0.69 0.66 0.53 0.81 0.96 0.53 0.43 0.77 0.28 0.68 0.53 0.92 0.94 0.99
+Caller: d'accord
+Confidence: 0.96
+Receiver: encore 3 ans
+Confidence: 0.69 0.94 0.94
+Caller: d'accord
+Confidence: 0.81
+Receiver: et sinon emplacement j'ai environ 600 € euh enfin 600 $ excusez-moi sur mon Celli
+Confidence: 0.87 0.84 0.80 0.98 0.98 0.95 0.95 0.36 0.70 0.96 0.83 0.81 1.00 0.96 0.31
+Caller: d'accord 600 dollars 600 dollars
+Confidence: 1.00 0.21 0.36 0.14 0.26
+Receiver: oui
+Confidence: 0.78
+Caller: parfait en terme de de loisirs est-ce qu'il y aurait un voyage ou quelque chose que que vous voulez prendre en compte
+Confidence: 0.66 0.67 0.78 0.52 0.78 0.81 0.99 0.99 0.99 0.99 1.00 1.00 0.86 0.99 0.99 0.92 0.93 0.98 0.98 0.99 0.99 1.00
+Receiver: OK ah je ne vais pas vous mentir j'aimerais beaucoup l'hiver prochain euh me faire des petites vacances au au Mexique au sud de la l'hiver ce n'est vraiment pas pour moi du coup j'aimerais vérifier pas mal à un petit voyage pour l'hiver prochain peut-être que février dans un an pile là partir un petit mois euh au soleil
+Confidence: 0.51 0.80 0.96 0.69 0.81 0.96 0.97 0.74 0.98 1.00 0.97 0.99 0.89 0.98 0.98 0.98 0.93 0.97 0.91 0.96 0.96 0.87 0.80 0.98 0.74 0.96 0.61 0.77 0.83 0.98 1.00 1.00 0.99 0.99 0.90 0.71 0.98 0.94 0.63 0.76 0.97 0.98 0.97 0.96 0.99 0.92 0.66 0.93 0.93 0.93 0.91 0.92 0.92 0.80 0.88 0.96 0.98 0.87 0.99 0.98
+Caller: MHM parfait ça ça a beaucoup coûté à peu près combien ce voyage
+Confidence: 0.67 0.83 0.73 0.80 0.59 0.79 0.60 0.86 0.85 0.85 0.98 0.99 1.00
+Receiver: je ne sais pas je pense ça me coûterait dans les 2000 - 2500 euh Canadiens après il faut que je prenne surtout en compte c'est le les les arrêts de travail je pourrais bien sûr moins travailler mais je me fixe un billet de 2500 euh pour avoir un bon hôtel et pouvoir quand même bien m'amuser euh en restant financièrement responsable
+Confidence: 0.70 0.55 0.55 0.55 0.83 0.83 0.92 0.91 0.77 1.00 1.00 0.82 0.58 0.69 0.74 0.89 0.96 0.88 0.88 0.99 0.99 0.98 0.94 0.92 0.88 0.91 0.54 0.91 0.95 0.96 0.90 0.90 0.95 0.95 0.87 0.87 0.96 0.97 0.93 0.99 0.97 0.58 0.66 0.93 0.93 0.92 0.77 0.98 0.95 0.86 0.91 0.96 0.97 0.86 0.82 0.82 0.99 1.00 0.73 0.85 0.85 0.96 0.95
+Caller: parfait monsieur merci pour vos réponses donc euh vu que vous êtes jeune on va pas parler tout de suite de la retraite mais on va on va se mettre un rendez-vous plus tard euh dans dans les prochaines années à peine d'en parler un peu plus
+Confidence: 0.73 0.86 0.99 0.99 0.93 0.96 0.97 0.74 0.96 0.89 0.92 0.98 0.91 0.85 0.85 0.91 0.89 0.99 1.00 1.00 1.00 1.00 0.98 0.99 0.77 0.77 0.66 0.89 0.96 0.96 1.00 1.00 0.99 1.00 0.71 0.94 0.95 0.98 0.99 0.97 0.64 0.86 0.90 0.96 0.99 0.99 0.99
+Receiver: OK ok
+Confidence: 0.49 0.49
+Caller: en terme de protection monsieur est-ce que vous avez en ce moment des assurances vie des assurances invalidité
+Confidence: 0.98 0.93 0.99 0.99 0.72 0.99 1.00 0.99 1.00 0.95 0.98 0.91 0.99 0.99 0.71 0.98 0.99 0.73
+Receiver: euh j'ai l'assurance de mon logement qui est avec Desjardins je ne sais pas si ça rentre en compte
+Confidence: 0.27 0.84 0.93 1.00 1.00 1.00 0.98 0.86 0.86 0.98 0.76 0.82 0.82 0.96 0.78 0.94 0.83 0.99 0.98
+Caller: d'accord donc l'assurance habitation
+Confidence: 0.99 0.97 0.76 0.93
+Receiver: ouais
+Confidence: 0.84
+Caller: vous payez combien par mois pour ça à peu près
+Confidence: 0.77 0.85 0.98 0.99 1.00 0.99 0.96 0.98 0.98 0.98
+Receiver: euh c'est il me semble que c'est 27 $ tous les 2 mois si je ne dis pas de bêtises
+Confidence: 0.95 0.91 0.66 0.81 0.68 0.95 0.95 0.86 0.89 0.96 0.96 0.83 0.86 0.98 0.96 0.96 0.96 0.96 0.96 0.96
+Caller: d'accord quoi quoi d'autre
+Confidence: 0.81 0.17 0.34 0.90
+Receiver: euh j'ai une assurance médicale que je paye encore avec mon école qui est encore valide euh c'est la SEC je vous avoue je ne sais pas je paye combien très honnêtement mais donc c'est ça j'ai mais
+Confidence: 0.53 0.90 0.97 0.97 0.86 0.98 0.97 0.94 0.98 1.00 1.00 0.97 0.99 0.91 0.91 0.98 0.93 0.95 0.67 0.62 0.98 0.98 0.99 0.64 0.64 0.78 0.78 0.70 0.95 0.93 0.98 0.96 0.89 0.86 0.90 0.90 0.47 0.73
+Caller: MHM c'est quoi c'est une assurance euh c'est une assurance invalidité c'est quoi
+Confidence: 0.79 0.69 0.84 0.85 0.86 0.89 0.24 0.85 0.91 0.96 0.92 0.96 0.99
+Receiver: euh médical je n'ai pas plus d'informations sur ça euh ça me couvre les frais une partie de mes frais dentaires et de pharmacie euh docteur
+Confidence: 0.40 0.47 0.81 0.81 0.81 0.89 0.92 0.98 0.99 0.76 0.99 0.99 0.92 0.91 0.97 0.89 0.98 0.91 0.93 0.97 0.75 0.90 0.96 0.95 0.82 0.79
+Caller: ok je comprends je comprends donc à part ça on n'avait rien d'autre
+Confidence: 0.22 0.75 0.75 0.95 0.95 0.80 0.92 0.92 0.75 0.99 0.95 0.97 1.00
+Receiver: euh laissez-moi réfléchir euh hmm non non j'ai quasiment sûr général
+Confidence: 0.24 0.90 0.96 0.83 0.55 0.95 0.99 0.81 0.93 0.39 0.76
+Caller: parfait donc euh dites-moi monsieur si vous il vous arrivez à une invalidité est-ce que vous direz que c'est important de protéger votre salaire
+Confidence: 0.97 0.99 0.29 0.98 0.99 1.00 0.99 0.99 0.99 0.72 0.58 0.58 0.90 1.00 1.00 0.99 0.81 0.98 0.98 1.00 0.65 0.93 1.00 0.99
+Receiver: euh c'est-à-dire de de pouvoir euh concilier à à toucher mon mon salaire même si je ne peux pas aller au travail
+Confidence: 0.18 0.33 0.38 0.68 0.83 0.29 0.80 0.74 0.82 0.97 0.83 0.88 0.98 0.87 0.99 0.97 0.93 0.93 0.97 0.94 0.94 0.94
+Caller: exactement
+Confidence: 0.93
+Receiver: ah ça serait oui ça serait ça serait pratique oui
+Confidence: 0.69 0.60 0.86 0.94 0.77 0.93 0.86 0.94 0.95 0.93
+Caller: parfait et si jamais vous arrivez une maladie grave vous serez d'accord avec moi que ce serait intéressant pour vous de couvrir les frais associés à cette maladie
+Confidence: 0.97 1.00 1.00 1.00 1.00 0.94 0.99 1.00 0.99 1.00 0.95 0.99 1.00 1.00 1.00 0.70 0.97 0.89 1.00 1.00 1.00 1.00 0.98 0.98 0.95 1.00 1.00 0.96
+Receiver: ah oui oui parce que je sais que mon assurance elle ne coupe pas tout par exemple quand je vais aux urgences il y a certaines choses qui ne sont pas couverts
+Confidence: 0.97 0.99 0.98 1.00 1.00 0.99 1.00 0.92 0.96 0.96 0.96 0.86 0.75 0.98 0.96 1.00 1.00 1.00 0.94 0.84 0.94 0.96 0.90 0.90 0.90 0.96 0.90 0.97 0.95 0.95 0.99 0.26
+Caller: MHM parfait parfait monsieur et est-ce que vous avez disons un un une organisation de charité ou quelque chose comme ça que vous voulez léguer un héritage ou un don si vous arrivez à un décès
+Confidence: 0.60 0.65 0.77 0.99 0.67 1.00 1.00 0.99 1.00 0.98 0.92 0.96 0.99 1.00 0.72 0.65 0.99 1.00 1.00 1.00 1.00 1.00 1.00 0.98 0.85 0.87 0.94 1.00 1.00 0.96 0.98 0.99 0.91 0.47 0.92 0.83
+Receiver: euh je n'ai pas pensé euh j'avoue que je n'ai pas de je pense souvent euh de meilleur optimisme mais oui j'ai pas mal travaillé pour Relais pour la vie quand j'étais étudiant et c'est vrai que je me dis que s'il m'arrive quelque chose de de grave de donner une partie de ces fonds à à cette association ça me ferait quand même plaisir
+Confidence: 0.40 0.67 0.67 0.67 0.90 0.81 0.86 0.94 0.87 0.87 0.87 0.95 0.73 0.96 1.00 0.65 0.92 0.72 0.90 0.99 1.00 0.84 0.97 0.99 0.86 0.98 0.70 0.92 0.92 0.92 0.99 0.74 0.82 0.98 0.82 0.98 0.99 0.90 0.87 0.84 0.88 0.69 0.59 0.99 0.99 0.91 0.94 0.97 0.84 0.86 0.88 0.88 0.94 0.93 0.86 0.56 0.63 0.54 0.74 0.84 0.95 0.79 0.84 0.84 1.00
+Caller: MHM et c'est à peu près combien que vous voudriez laisser un Relais pour la vie
+Confidence: 0.28 0.90 0.91 0.92 0.92 0.92 0.90 0.99 0.99 0.94 0.99 0.86 0.85 0.97 0.94 0.94
+Receiver: euh je ne sais pas peut-être euh cinq ou six % de mon capital en 4dc
+Confidence: 0.23 0.86 0.68 0.68 0.68 0.72 0.49 0.84 0.81 0.80 0.52 0.98 0.98 0.90 0.78 0.69
+Caller: 56% de votre capital c'est-à-dire combien de dollars vous voulez laisser
+Confidence: 0.40 0.86 0.98 0.98 0.98 1.00 0.99 0.96 0.99 0.96 0.98
+Receiver: ben j'imagine que si je meurs dans euh comment dire si je meurs plus tard mon capitaine aurait augmenté du coup ça sera pas les mêmes chiffres non ce ne sera pas la même somme
+Confidence: 0.23 0.98 0.99 0.99 1.00 0.99 0.92 0.58 0.85 0.97 0.99 1.00 0.99 0.99 0.99 0.99 0.87 0.19 0.96 0.99 0.99 0.88 0.97 0.94 0.71 0.94 0.96 0.96 0.62 0.91 0.91 0.92 0.92 0.96 0.84
+Caller: ah ça ça dépend de ça dépend de vous prenez quoi comme Assurance Vie
+Confidence: 0.74 0.51 0.96 0.99 0.95 0.85 0.99 0.97 0.96 0.99 0.98 0.91 0.59 0.68
+Receiver: ah ok
+Confidence: 0.97 0.89
+Caller: mais est-ce que vous pensez vous pensez que ce serait plus dans les 100 000 dans les 200000 50000
+Confidence: 0.50 0.97 0.97 0.97 0.99 0.99 0.98 0.98 0.78 0.97 0.99 1.00 1.00 0.97 0.35 0.98 0.99 0.39 0.57
+Receiver: et je je cherche absolument pas comment ça marche une assurance vie ça ça vous dérangerait de me l'expliquer rapidement je m'excuse hein je ne connais pas du tout
+Confidence: 0.34 0.58 0.58 0.45 0.84 0.98 0.97 0.99 0.98 0.90 0.91 0.97 0.62 0.93 0.97 0.87 0.94 0.74 0.93 0.97 0.99 0.97 0.68 0.94 0.82 0.82 0.95 0.99 1.00
+Caller: ah d'accord donc il n'y a pas de problème il y a pas de problème donc je mettrai en note de vous expliquer un peu plus les assurances vie vu que c'est quelque chose que vous n'avez pas trop d'informations et que vous voulez peut-être en apprendre un peu plus
+Confidence: 0.66 0.95 0.94 0.94 0.86 0.86 0.99 0.98 0.99 0.91 0.91 0.91 0.99 0.97 0.97 0.97 0.96 0.94 0.93 0.94 0.99 0.99 0.99 0.96 0.96 0.99 0.99 0.97 0.74 0.72 0.84 0.76 0.99 0.99 0.96 0.98 0.81 0.81 0.99 0.82 0.50 0.65 0.97 0.82 0.78 0.80 0.93 0.98 0.98 0.99
+Receiver: oui oui ça me ferait plaisir
+Confidence: 0.84 0.96 0.99 0.96 0.69 0.95
+Caller: parfait parfait monsieur donc maintenant parlons un peu plus de vos actifs vous m'avez dit que vous aviez un Cellia c'est ça
+Confidence: 0.52 0.31 0.98 0.82 0.97 0.98 0.99 0.99 0.99 0.99 0.98 0.89 1.00 0.97 0.99 1.00 0.96 0.94 0.97 0.25 0.94 0.98
+Receiver: oui
+Confidence: 0.83
+Caller: les deux il y avait 600 $ et ils sont avec qui
+Confidence: 0.82 0.69 0.55 0.55 0.55 0.88 0.76 0.72 0.68 0.88 0.99 0.99
+Receiver: euh j'avais essayé depuis où est sample euh je ne sais pas trop si c'est un broker particulier mais depuis l'application ouais elle ne fonctionne pas
+Confidence: 0.50 0.19 0.70 0.94 0.50 0.66 0.56 0.81 0.93 0.93 0.93 0.93 0.98 0.79 0.95 0.89 0.79 0.98 0.98 0.64 0.96 0.24 0.85 0.47 0.47 0.61
+Caller: OK parfait laissez-moi juste enregistrer ça c'est et ça votre profil d'investisseur votre portefeuille il est équilibré audacieux croissant c'est quoi
+Confidence: 0.41 0.55 0.97 0.99 0.98 0.99 0.84 0.95 1.00 1.00 1.00 0.99 1.00 0.99 0.96 0.96 0.96 1.00 0.95 0.94 0.99
+Receiver: euh comment dire non il est plutôt équilibré dans le euh croissance stable j'investis euh dans des ETF
+Confidence: 0.69 0.87 0.30 0.77 0.84 0.84 0.99 0.87 0.97 0.87 0.91 0.97 0.63 0.88 0.91 0.99 0.97 0.65
+Caller: d'accord et votre rendement par année il est à peu près à combien
+Confidence: 1.00 1.00 1.00 0.99 0.98 0.96 0.96 0.91 0.72 0.95 0.99 0.95 0.96
+Receiver: je dois être dans les euh je vous garde l'année dernière j'ai enfin depuis cette année excusez-moi ça fait environ 1 an que j'ai mes sous euh que j'ai placé dedans je vais venir tout de suite je suis à 60 %.
+Confidence: 0.99 0.99 1.00 0.97 0.96 0.90 0.80 0.71 0.44 0.92 0.89 0.95 0.21 0.93 0.76 0.87 0.59 0.80 0.81 0.92 0.76 0.93 0.94 0.95 0.77 0.92 0.90 0.94 0.96 0.95 0.99 0.63 0.63 0.57 0.95 0.95 0.95 0.65 0.65 0.80 1.00 0.34
+Caller: 60,81
+Confidence: 0.39
+Receiver: 5 % je suis à 5 % de rendement environ
+Confidence: 0.73 0.90 0.73 0.73 0.72 0.89 0.89 0.65 0.53 0.82
+Caller: ah parfait 5 % de rendement sur la dernière année parfait j'ai la même chose pour le CIA
+Confidence: 0.82 0.94 0.75 0.58 0.96 0.38 0.82 0.78 0.88 0.84 0.91 0.46 1.00 0.99 1.00 0.99 0.98 0.27
+Receiver: oui j'ai euh en fait je mets les mêmes actions dans les deux je euh je ne m'embête pas trop trop je vais pas vous mentir
+Confidence: 0.95 0.52 0.59 0.99 0.99 0.69 0.58 0.96 0.85 0.92 0.93 0.91 0.99 0.64 0.60 0.82 0.84 0.93 0.93 0.97 0.98 0.58 0.63 0.63 0.58 0.61
+Caller: d'accord donc c'est c'est un peu c'est tout investi dans la même chose en fait
+Confidence: 0.98 0.79 0.36 0.61 0.37 0.37 0.77 0.84 0.88 0.97 0.97 0.99 1.00 1.00 1.00
+Receiver: oui
+Confidence: 0.80
+Caller: parfait et ça aussi c'est avec World simple
+Confidence: 0.63 0.68 0.82 0.98 0.79 0.95 0.44 0.45
+Receiver: oui oui les deux
+Confidence: 0.68 0.83 0.99 0.99
+Caller: parfait c'est quand la date d'ouverture vous les avez ouvert il y a 3 mois à peu près
+Confidence: 0.85 0.98 0.91 1.00 1.00 0.99 0.98 0.98 0.97 0.92 0.98 0.98 0.98 0.99 0.99 0.84 0.93 0.93
+Receiver: euh je pense que oui je pense que ça doit être ça
+Confidence: 0.45 0.89 1.00 0.93 0.99 0.96 0.99 0.91 0.84 0.67 0.67 0.96
+Caller: donc en 2024
+Confidence: 0.57 0.43 0.98
+Receiver: ouais en novembre 24
+Confidence: 0.70 0.65 0.91 0.84
+Caller: parfait est-ce que vous aviez d'autres placements
+Confidence: 0.90 1.00 1.00 1.00 0.96 0.93 0.87
+Receiver: euh j'ai un peu de cryptom monnaie mais
+Confidence: 0.47 0.53 0.99 0.99 0.99 0.11 0.52 0.96
+Caller: d'accord vous avez combien en crypto monnaie
+Confidence: 1.00 1.00 1.00 1.00 0.97 0.88 0.63
+Receiver: j'ai 300 $ aussi 300 dollars
+Confidence: 0.57 0.63 0.81 0.90 0.55 0.28
+Caller: 300$
+Confidence: 0.23
+Receiver: ouais
+Confidence: 0.54
+Caller: parfait et votre rendement sur ça c'est combien à peu près
+Confidence: 0.82 1.00 1.00 0.99 0.96 0.96 0.97 0.99 0.99 0.99 0.99
+Receiver: euh je vais à tout de suite mettre sur euh sur 1 an c'est 60,45 % euh la crypto a quand même bien monté là
+Confidence: 0.35 0.33 0.33 0.70 0.97 0.97 0.97 0.57 0.91 0.61 0.92 0.89 0.96 0.58 0.24 0.60 0.70 0.91 0.69 0.59 0.63 0.63 0.93 0.76 0.89
+Caller: ouais parfait et ça aussi c'est sur Word c'est bien ça
+Confidence: 0.67 0.82 0.73 0.96 1.00 0.87 0.96 0.95 0.94 0.94 1.00
+Receiver: oui exactement
+Confidence: 0.88 0.89
+Caller: parfait parfait donc ça c'est pour les placements maintenant en terme de d'autres actifs est-ce que vous aviez euh vous vous aviez quelque chose comme euh euh une voiture
+Confidence: 0.70 0.25 0.93 0.99 0.98 1.00 0.96 0.96 0.99 0.80 0.80 0.74 0.79 0.78 1.00 1.00 0.87 0.94 0.91 0.84 0.95 0.91 1.00 1.00 0.99 0.87 0.87 0.99 0.98
+Receiver: non mais malheureusement j'ai toujours pas de voiture
+Confidence: 0.64 0.38 0.90 0.41 0.91 0.98 0.98 0.95
+Caller: d'accord est-ce que là vous avez un loyer vous m'avez dit vous avez vous vous êtes en appartement
+Confidence: 0.99 0.97 0.97 0.59 0.64 0.90 0.93 0.91 0.63 0.85 0.91 0.38 0.55 0.46 0.68 0.92 0.96 1.00
+Receiver: oui oui j'ai un loyer
+Confidence: 0.81 0.94 0.93 0.93 0.94
+Caller: d'accord vous payez combien par mois
+Confidence: 0.86 0.96 0.97 0.99 1.00 0.99
+Receiver: je paye avec les charges donc Internet et et drôle je suis environ dans les 900 $. voire un peu plus de 900 ouais
+Confidence: 0.68 0.50 0.95 1.00 1.00 0.28 0.95 0.92 0.87 0.41 0.75 0.75 0.79 0.99 1.00 0.89 0.63 0.55 0.91 0.91 0.96 0.70 0.78 0.81
+Caller: 100$ par mois parfait
+Confidence: 0.10 0.98 0.93 0.85
+Receiver: ah oui mais je m'excuse euh monsieur Ryan j'ai j'ai complètement oublié mais maintenant que vous m'en parlez des fois que j'avais comme projet de m'acheter une voiture bientôt parce que c'est quand même assez important pour pour l'image que ça dégage envers les clients
+Confidence: 0.62 0.25 0.75 0.74 1.00 0.44 0.91 0.37 0.65 0.76 0.95 0.76 0.64 0.87 0.72 0.94 0.89 0.81 0.84 0.86 0.85 0.76 0.94 0.90 0.95 0.91 0.99 1.00 0.97 1.00 0.99 0.97 0.97 0.97 0.98 1.00 0.98 0.96 0.96 0.98 0.99 0.97 0.73 0.87 0.93
+Caller: ouais MHM
+Confidence: 0.54 0.69
+Receiver: et euh ben je réfléchissais euh je réfléchissais un peu par rapport à ça sinon pour avoir des voitures parce que c'est des des financements euh parce que je voudrais la payer en bah en plusieurs fois bien sûr en en 2 3 ans par exemple c'est quelque chose que vous offrez euh avec qui
+Confidence: 0.93 0.52 0.69 0.77 0.62 0.79 0.73 0.59 0.99 0.99 1.00 1.00 1.00 0.99 0.89 0.81 0.90 0.98 0.99 0.63 0.63 0.87 0.88 0.93 0.99 0.49 0.94 0.94 0.81 0.91 0.99 1.00 0.81 0.43 0.87 0.99 1.00 0.99 0.95 0.74 0.82 0.50 0.79 0.99 1.00 1.00 0.66 0.69 0.78 0.97 0.97 0.68 0.69 0.98 0.84
+Caller: parfait OK MHM je comprends parfait donc je mets ça comme euh comme note donc euh maintenant en terme de de passif de dette vous m'aviez dit vous aviez le prix étudiant c'est ça et ça c'était combien par mois vous m'avez dit 500
+Confidence: 0.57 0.32 0.80 0.82 0.82 0.77 0.95 0.88 0.92 0.99 0.94 0.57 0.89 0.99 0.99 0.82 0.75 0.99 0.67 0.85 0.98 0.93 0.97 0.70 0.99 0.97 0.97 1.00 0.97 1.00 0.94 0.89 0.98 1.00 0.80 0.97 0.89 0.98 0.99 0.99 0.99 0.95 0.98 0.93
+Receiver: oui euh non je suis je suis démonter de de 500 dollars par mois et il me reste encore 3 ans de près
+Confidence: 0.73 0.26 0.91 0.49 0.30 0.59 0.26 0.51 0.52 0.73 0.49 0.53 0.87 0.90 0.87 0.64 0.32 0.62 0.26 0.80 0.78 0.73 0.73
+Caller: des mensualités de 700$ par mois pour trois entrées c'est ça
+Confidence: 0.92 0.93 0.90 0.49 0.98 0.94 0.95 0.80 0.97 0.95 0.96
+Receiver: oui euh pendant 3 ans encore
+Confidence: 0.71 0.30 0.74 0.89 0.97 0.96
+Caller: c'est ça parfait et ça c'est avec quelle université
+Confidence: 0.42 0.81 0.95 0.94 0.92 0.88 0.96 0.76 0.95
+Receiver: euh je fais avec l'Université de Google
+Confidence: 0.21 0.64 0.35 0.93 0.85 0.70 0.11
+Caller: parfait est-ce qu'il y a d'autres dettes comme une carte de crédit il reste 200$ à payer dessus
+Confidence: 0.96 0.77 0.94 0.94 0.94 0.94 0.99 0.99 1.00 0.97 1.00 1.00 0.87 0.87 0.56 0.97 0.98 0.99
+Receiver: ouais exactement je ne sais pas si c'est vraiment si ça tombe comme une bête
+Confidence: 0.44 0.97 0.86 0.86 0.86 0.94 0.81 0.94 0.94 0.61 0.77 0.40 0.94 0.96 0.86
+Caller: parfait c'est avec quelle banque
+Confidence: 0.94 0.98 0.98 0.94 0.96
+Receiver: avec Desjardins
+Confidence: 0.96 0.88
+Caller: Desjardins c'est parfait donc à part ça il n'y avait pas d'autres il n'y avait pas d'autres dettes c'est ça
+Confidence: 0.93 0.49 0.89 0.96 0.91 0.83 0.64 0.99 0.95 0.95 0.99 0.83 0.93 0.91 0.91 0.99 0.87 0.91 0.99 0.99
+Receiver: non à part la carte et euh et la mon prénom je n'ai pas le deck
+Confidence: 0.86 0.98 0.90 0.96 0.96 0.81 0.77 0.77 0.85 0.89 0.82 0.87 0.87 0.87 0.55 0.15
+Caller: parfait vous m'avez dit que vous vous étiez avocat en ce moment hein
+Confidence: 0.85 0.98 0.99 1.00 1.00 0.88 0.97 0.89 0.98 0.98 0.98 0.98 0.79
+Receiver: c'est ça oui
+Confidence: 0.71 0.71 0.94
+Caller: et c'est quoi le nom de l'employeur
+Confidence: 0.77 0.92 0.91 1.00 0.99 0.99 1.00
+Receiver: il dit qu'il arrive carie euh maxile le M a T H a e excuse-moi M a T H et I l D E et l I c a r I e
+Confidence: 0.00 0.00 0.00 0.00 0.14 0.40 0.09 0.17 0.65 0.75 0.86 0.54 0.65 0.67 0.87 0.89 0.92 0.89 0.52 0.36 0.40 0.65 0.65 0.84 0.49 0.84 0.71 0.89 0.94 0.96 0.83 0.69
+Caller: il dit ouais parfait et c'est quand que vous avez commencé là-bas
+Confidence: 0.71 0.57 0.75 0.92 0.97 0.86 0.99 0.84 0.84 0.84 0.99 0.97
+Receiver: euh il y a environ euh 1 an et demi euh oui c'était en ouais environ 1 an et demi
+Confidence: 0.33 0.65 0.65 0.65 0.94 0.70 0.95 0.99 0.83 0.67 0.85 0.98 0.77 0.78 0.95 0.93 0.50 0.40 0.26 0.45
+Caller: quand 2023
+Confidence: 0.14 0.90
+Receiver: oui c'est ça
+Confidence: 0.91 0.94 0.94
+Caller: et votre revenu annuel c'est à peu près combien
+Confidence: 0.80 0.98 0.96 0.95 0.83 0.98 0.98 0.98 0.98
+Receiver: euh là en ce moment je vais être dans les environs 55000 par année
+Confidence: 0.46 0.84 0.88 0.88 0.88 0.92 0.76 0.39 0.96 0.59 0.76 0.65 0.74 0.61
+Caller: 55 000 par année d'accord parfait parfait euh donc vous n'avez pas de fond d'urgence en ce moment parce que votre crypto mononnaie est-ce que vous avez investi c'est bien ça pas d'assurance vie en terme d'invalidité Vous m'avez dit vous aviez juste euh celle par l'université c'est ça
+Confidence: 0.45 0.33 0.85 0.45 0.84 0.64 0.29 0.50 0.87 0.94 0.95 0.99 0.93 0.53 0.90 0.99 0.98 0.98 0.89 0.89 1.00 0.86 0.67 0.85 0.99 0.99 0.99 0.42 0.97 0.97 0.95 0.53 0.76 0.82 0.97 0.89 0.86 0.98 0.96 0.98 0.98 0.79 0.98 0.22 0.60 0.85 0.71 0.99 0.99
+Receiver: oui exactement
+Confidence: 0.88 0.83
+Caller: parfait monsieur donc en terme de projet vous m'avez dit achat d'un véhicule
+Confidence: 0.99 1.00 1.00 0.99 0.72 0.98 0.96 1.00 0.99 0.94 0.97 0.99 0.98
+Receiver: ouais
+Confidence: 0.85
+Caller: c'est quand que vous voulez l'acheter
+Confidence: 0.75 0.97 0.90 0.99 0.96 0.99
+Receiver: euh je pense dans dans 3 4 mois je n'ai pas à vous mentir ça me
+Confidence: 0.85 0.58 0.58 0.49 0.47 0.46 0.70 0.75 0.91 0.91 0.91 0.69 0.69 0.94 0.58 0.58
+Caller: d'accord donc en
+Confidence: 0.96 0.89 0.32
+Receiver: ça serait idéal ouais mais je vois pas
+Confidence: 0.46 0.31 0.46 0.60 0.30 0.45 0.28 0.37
+Caller: en mai parfait et et c'est combien elle est combien la voiture à peu près achetée
+Confidence: 0.47 0.82 0.94 0.79 0.96 0.89 0.95 0.81 0.81 0.99 0.72 1.00 0.99 1.00 1.00 0.94
+Receiver: je ne sais pas encore je vis une voiture dans les 8000 $ maximum
+Confidence: 0.66 0.67 0.67 0.67 0.96 0.83 0.75 0.90 0.91 1.00 0.96 0.95 0.76 0.99
+Caller: d'accord parfait donc vous m'avez dit aussi vous voulez acheter une maison puis bien ça
+Confidence: 0.82 0.51 0.80 0.96 0.99 0.97 0.99 0.99 0.94 0.99 1.00 1.00 0.89 0.96 0.94
+Receiver: oui
+Confidence: 0.86
+Caller: c'est c'est quand vous prévoyez l'acheter
+Confidence: 0.56 0.87 0.94 0.89 0.58 0.95
+Receiver: hmm je c'est ton je pense que vous avez raison de 5 à 7 ans
+Confidence: 0.48 0.78 0.60 0.45 0.93 0.86 0.66 0.82 0.53 0.70 0.90 0.88 0.95 0.85 0.85
+Caller: dans 5 ans à peu près
+Confidence: 0.77 0.91 0.96 0.81 0.81 0.81
+Receiver: oui
+Confidence: 0.81
+Caller: donc autour de février 2030
+Confidence: 0.98 0.67 0.89 1.00 0.97
+Receiver: oui c'est ça
+Confidence: 0.89 0.89 0.89
+Caller: puis on dirait que c'est c'est quoi comme maison c'est un condo de quoi 300 400 000 à peu près que vous voulez acheter
+Confidence: 0.53 0.84 0.84 0.84 0.84 0.83 0.95 0.96 0.99 0.83 0.57 0.97 0.92 0.88 0.94 0.82 0.79 0.94 0.98 0.98 0.94 0.95 0.97 0.89
+Receiver: euh ça a sûrement un peu plus grand vu que ce serait pour avoir des des enfants et les aider ici peut-être quelque chose d'un peu plus grand
+Confidence: 0.63 0.86 0.67 0.67 0.87 0.86 0.98 0.84 0.68 0.62 0.42 0.83 0.77 0.89 0.89 0.94 0.98 0.74 0.70 0.33 0.47 0.69 0.44 0.44 0.61 0.61 0.95 0.85
+Caller: MHM donc quelque chose autour de 800 000
+Confidence: 0.86 0.89 0.86 0.86 0.92 0.94 0.90 0.71
+Receiver: oui je ne pense plus
+Confidence: 0.95 0.97 0.89 0.89 0.93
+Caller: parfait et vous m'avez dit aussi euh vous voulez voyager pendant un mois c'est ça
+Confidence: 0.41 0.92 0.94 0.99 0.95 0.97 0.67 0.98 0.94 0.99 0.86 0.88 0.88 0.97 0.97
+Receiver: oui l'année prochaine on y va prochain
+Confidence: 0.94 0.95 0.88 1.00 0.98 0.92 0.95
+Caller: donc en janvier 2027 c'est ça que vous m'avez dit
+Confidence: 0.94 0.86 0.98 0.96 0.96 0.96 0.97 0.97 0.98 0.95
+Receiver: le 26 26
+Confidence: 0.12 0.41 0.57
+Caller: ouais 2027 et vous m'avez dit que ça coûterait à peu près 25$ par mois
+Confidence: 0.67 0.50 0.74 0.63 0.63 0.82 0.61 0.93 0.95 0.98 0.98 0.98 0.58 0.94 0.99
+Receiver: oui
+Confidence: 0.85
+Caller: parfait donc euh à partir d'ici moi monsieur j'ai toutes les informations que j'ai besoin donc euh merci pour m'avoir donné votre temps nous on va on va regarder tout ce que vous nous avez donné comme information on va vous établir un plan puis on reprend rendez-vous la la même date la semaine prochaine à la même heure comme ça on pourra en discuter un peu plus euh sur le plan que je vous ai fait
+Confidence: 0.71 0.94 0.40 0.97 0.79 0.99 0.92 0.96 0.99 0.98 0.98 1.00 0.99 0.91 0.95 0.99 0.64 0.99 0.98 0.59 0.94 0.99 0.98 0.97 0.90 0.94 0.89 0.90 0.99 0.99 0.99 1.00 0.99 0.98 0.98 1.00 0.98 0.93 0.96 0.96 0.99 0.96 0.95 0.94 0.98 0.88 0.96 0.99 0.81 0.96 1.00 1.00 0.98 0.99 0.99 0.92 0.92 1.00 0.99 0.97 0.98 0.92 0.92 0.99 0.98 0.98 0.98 1.00 0.42 1.00 0.99 0.98 1.00 0.97 0.99 0.95 0.95
+Receiver: ok ben merci beaucoup à vous pour votre temps monsieur Ryan ça fait extrêmement plaisir
+Confidence: 0.71 0.52 0.99 1.00 0.98 0.98 0.98 0.98 0.96 1.00 0.88 0.99 0.99 0.97 1.00
+Caller: merci à vous monsieur Benjamin passez une excellente journée
+Confidence: 1.00 1.00 1.00 0.99 0.82 0.91 0.98 0.99 0.95
+Caller: bye bye
+Confidence: 0.55 0.55
