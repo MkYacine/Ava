@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import streamlit as st
 from transcribe.transcribe import *
 from salesforce.salesforce_helpers import *
@@ -6,7 +9,6 @@ from twiliohelpers.twilio_handlers import twilio_client
 from gcs.gcs_handlers import get_latest_gcs_files, process_and_upload_audio
 from utils import check_password, extract_form_with_confidence, extract_form_without_confidence
 import os
-from dotenv import load_dotenv
 import requests
 from requests.auth import HTTPBasicAuth
 from anthropic import Anthropic
@@ -17,9 +19,6 @@ from pydub import AudioSegment
 import time
 import uuid
 from google.cloud import logging as cloud_logging
-
-# Loading environment variables
-load_dotenv()
 
 # Configuration des credentials Google Cloud
 credentials_dict = {
@@ -105,27 +104,79 @@ initialize_session_state()
 logger = get_logger(st.session_state.pipeline_id)
 
 
-st.title("Speech-to-Text Transcription and Call Management")
+st.title("AVA - Intelligence Artificielle pour Appels d'Assurance")
 
+# Injection de CSS personnalisé pour styliser les boutons
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #3498db;
+        color: white !important; /* On force la couleur à rester blanche */
+        border: none;
+        border-radius: 5px;
+        padding: 10px 24px;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+    div.stButton > button:hover {
+        background-color: #2980b9;
+        color: white !important; /* On force la couleur à rester blanche */
 
+    }   
+    /* Style pour les boutons st.download_button */
+    /* On cible ici le bouton qui se trouve dans le container stDownloadButton */
+    /* Style pour les boutons st.download_button avec des couleurs différentes */
+    div.stDownloadButton > button {
+        background-color: #2ecc71; /* Vert : couleur différente pour marquer une autre action */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 24px;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        width: auto;
+    }
+    div.stDownloadButton > button:hover {
+        background-color: #27ae60;
+        color: white !important;
+    }
+    /* Personnalisation du container du st.audio */
+    div.stAudio {
+         margin: 10px 0;
+         border: 1px solid #ddd;
+         border-radius: 5px;
+         background-color: #f9f9f9;
+         padding: 10px;
+      }
+      /* Personnalisation de l'élément audio */
+    div.stAudio audio {
+         width: 100%;
+         border-radius: 5px;
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
-if st.button("Start Call"):
-    st.session_state.pipeline_stage = 'start'
-    st.rerun()
-
-if st.button("Start Processing"):
-    load_preset_files()  # Load preset files before starting processing
-    st.session_state.pipeline_stage = 'generate_ai_response'
-    st.rerun()
+# Affichage côte à côte des deux boutons
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Démarrer l'appel", key="start_call"):
+        st.session_state.pipeline_stage = 'start'
+        st.rerun()
+with col2:
+    if st.button("Démarrer le traitement", key="start_processing"):
+        load_preset_files()  # Charge les fichiers prédéfinis avant de démarrer le traitement
+        st.session_state.pipeline_stage = 'generate_ai_response'
+        st.rerun()
 
 # Main pipeline
 if st.session_state.pipeline_stage == 'start':
     logger.log_text("Pipeline started", severity='INFO')
-    st.header("Make a call and transcribe")
-    forward_number = st.text_input("Enter the intermediate number (e.g., +1234567890)")
-    to_number = st.text_input("Enter the final recipient's number (e.g., +1234567890)")
+    st.header("Passer un appel et transcrire")
+    forward_number = st.text_input("Entrez le numéro intermédiaire (ex: +1234567890)")
+    to_number = st.text_input("Entrez le numéro du destinataire final (ex: +1234567890)")
     
-    if st.button("Start Pipeline"):
+    if st.button("Démarrer la Pipeline"):
         if forward_number and to_number:
             try:
                 response = requests.post(f"{os.getenv('NGROK_URL')}/make_call", 
@@ -133,32 +184,32 @@ if st.session_state.pipeline_stage == 'start':
                 if response.status_code == 200:
                     call_data = response.json()
                     st.session_state.call_sid = call_data['sid']
-                    st.success(f"Call initiated. SID: {call_data['sid']}")
+                    st.success(f"Appel initié. SID: {call_data['sid']}")
                     logger.log_text(f"Call initiated. SID: {call_data['sid']}", severity='INFO')
                     st.session_state.pipeline_stage = 'wait_for_call'
                 else:
-                    error_msg = f"Error during call: {response.text}"
+                    error_msg = f"Erreur pendant l'appel: {response.text}"
                     st.error(error_msg)
                     logger.log_text(error_msg, severity='ERROR')
             except Exception as e:
-                error_msg = f"Error during call: {str(e)}"
+                error_msg = f"Erreur pendant l'appel: {str(e)}"
                 st.error(error_msg)
                 logger.log_text(error_msg, severity='ERROR')
         else:
-            st.warning("Please enter both phone numbers")
+            st.warning("Veuillez entrer les deux numéros de téléphone")
             logger.log_text("Call initiation attempted without both phone numbers", severity='WARNING')
 
 if st.session_state.pipeline_stage == 'wait_for_call':
-    st.header("Waiting for call to complete")
+    st.header("En attente de la fin de l'appel")
     call = twilio_client.calls(st.session_state.call_sid).fetch()
     
     if call.status in ['completed', 'failed', 'busy', 'no-answer', 'canceled']:
         if call.status == 'completed':
-            st.success("Call completed successfully.")
+            st.success("Appel terminé avec succès.")
             logger.log_text("Call completed successfully", severity='INFO')
             st.session_state.pipeline_stage = 'process_recording'
         else:
-            st.error(f"Call ended with status: {call.status}")
+            st.error(f"Appel terminé avec le statut: {call.status}")
             logger.log_text(f"Call ended with status: {call.status}", severity='ERROR')
             st.session_state.pipeline_stage = 'start'
     else:
@@ -166,7 +217,7 @@ if st.session_state.pipeline_stage == 'wait_for_call':
         st.rerun()
 
 if st.session_state.pipeline_stage == 'process_recording':
-    st.header("Processing Recording")
+    st.header("Traitement de l'Enregistrement")
     logger.log_text("Starting to process recording", severity='INFO')
     max_attempts = 10
     attempt = 0
@@ -174,7 +225,7 @@ if st.session_state.pipeline_stage == 'process_recording':
         recordings = twilio_client.recordings.list(call_sid=st.session_state.call_sid, limit=1)
         if recordings:
             selected_recording = recordings[0]
-            st.write(f"Processing recording SID: {selected_recording.sid}")
+            st.write(f"Traitement de l'enregistrement SID: {selected_recording.sid}")
             logger.log_text(f"Processing recording SID: {selected_recording.sid}", severity='INFO')
             
             stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{selected_recording.sid}.wav?RequestedChannels=2"
@@ -184,28 +235,28 @@ if st.session_state.pipeline_stage == 'process_recording':
                 bucket_name = "excalibur-testing"
                 gcs_uris, channels = process_and_upload_audio(response.content, bucket_name, credentials)
                 st.session_state.audio_files = channels
-                st.success(f"Audio processed and uploaded. GCS URIs: {gcs_uris}")
+                st.success(f"Audio traité et téléchargé. URIs GCS: {gcs_uris}")
                 logger.log_text(f"Audio processed and uploaded. GCS URIs: {gcs_uris}", severity='INFO')
                 st.session_state.pipeline_stage = 'transcribe'
                 break
             else:
-                st.error("Failed to download the recording.")
+                st.error("Échec du téléchargement de l'enregistrement.")
                 logger.log_text(f"Failed to download the recording {response}", severity='ERROR')
                 break
         else:
             attempt += 1
-            st.info(f"Waiting for recording to be available... (Attempt {attempt}/{max_attempts})")
+            st.info(f"En attente de la disponibilité de l'enregistrement... (Tentative {attempt}/{max_attempts})")
             logger.log_text(f"Waiting for recording to be available... (Attempt {attempt}/{max_attempts})", severity='INFO')
             time.sleep(5)
             st.rerun()
     
     if attempt == max_attempts:
-        st.error("Recording not found after maximum attempts. Please check the call status and try again.")
+        st.error("Enregistrement non trouvé après le nombre maximum de tentatives. Veuillez vérifier l'état de l'appel et réessayer.")
         logger.log_text("Recording not found after maximum attempts", severity='ERROR')
         st.session_state.pipeline_stage = 'start'
 
 if st.session_state.pipeline_stage == 'transcribe':
-    st.header("Transcribing Audio")
+    st.header("Transcription Audio")
     logger.log_text("Starting transcription stage", severity='INFO')
     bucket_name = "excalibur-testing"
     latest_files = get_latest_gcs_files(bucket_name, credentials)
@@ -213,16 +264,16 @@ if st.session_state.pipeline_stage == 'transcribe':
     if latest_files and len(latest_files) >= 2:
         for i, file in enumerate(latest_files[:2]):
             gcs_uri = f"gs://{bucket_name}/{file}"
-            st.info(f"Transcribing {file}...")
+            st.info(f"Transcription de {file}...")
             logger.log_text(f"Transcribing file: {gcs_uri}", severity='INFO')
             try:
                 transcript = transcribe_gcs_large(gcs_uri, credentials)
                 st.session_state.transcription_results.append(transcript)
-                st.success(f"Transcription for {file} completed successfully.")
+                st.success(f"Transcription de {file} terminée avec succès.")
                 logger.log_text(f"Transcription for {file} completed successfully.", severity='INFO')
                 logger.log_text(f"Transcript: {transcript}", severity='DEBUG')
             except Exception as e:
-                error_msg = f"An error occurred during transcription of {file}: {str(e)}"
+                error_msg = f"Une erreur s'est produite lors de la transcription de {file}: {str(e)}"
                 st.error(error_msg)
                 logger.log_text(error_msg, severity='ERROR')
         
@@ -233,27 +284,27 @@ if st.session_state.pipeline_stage == 'transcribe':
             logger.log_text(f"Rearranged conversation: {st.session_state.conversation}", severity='DEBUG')
             st.code(st.session_state.conversation)
     else:
-        st.warning("Waiting for audio files to be processed...")
+        st.warning("En attente du traitement des fichiers audio...")
         logger.log_text("Waiting for audio files to be processed...", severity='WARNING')
 
 if st.session_state.pipeline_stage == 'generate_ai_response':
-    st.header("Generating AI Response")
+    st.header("Génération de la Réponse IA")
     
     try:
-        with st.expander("Show transcript", expanded=False):
+        with st.expander("Afficher la transcription", expanded=False):
             st.code(st.session_state.conversation)
-        st.info("AI extracting data from transcript...")
+        st.info("L'IA extrait les données de la transcription...")
         time.sleep(4.23)
-        st.success("Form extracted sucessfully!")
+        st.success("Formulaire extrait avec succès!")
         logger.log_text("AI response generated successfully", severity='INFO')
         st.session_state.pipeline_stage = 'validate_form'
     except Exception as e:
-        error_msg = f"An error occurred while generating the AI response: {str(e)}"
+        error_msg = f"Une erreur s'est produite lors de la génération de la réponse IA: {str(e)}"
         st.error(error_msg)
         logger.log_text(error_msg, severity='ERROR')
 
 if st.session_state.pipeline_stage == 'validate_form':
-    st.header("Validate Form")
+    st.header("Validation du Formulaire")
     logger.log_text("Starting form validation", severity='INFO')
     
     if st.session_state.issues == None:
@@ -261,7 +312,7 @@ if st.session_state.pipeline_stage == 'validate_form':
             # Validate the form
             st.session_state.issues = validate_form(st.session_state.conf_form, st.session_state.transcription_results, st.session_state.audio_files)
         except Exception as e:
-            st.error(f"An error occurred during form validation: {str(e)}")
+            st.error(f"Une erreur s'est produite lors de la validation du formulaire: {str(e)}")
 
     # Display the form and allow editing
     if st.session_state.cleaned_form:
@@ -277,7 +328,7 @@ if st.session_state.pipeline_stage == 'validate_form':
 
     # Display issues and allow editing
     if st.session_state.issues:
-        st.subheader("Issues:")
+        st.subheader("Problèmes:")
         for i, (warning, audio) in enumerate(st.session_state.issues):
             col1, col2, col3 = st.columns([3, 1, 1])
             
@@ -292,83 +343,107 @@ if st.session_state.pipeline_stage == 'validate_form':
             key = warning.split(":")[0].split("for ")[-1].strip()
             
             # Allow user to edit the value
-            new_value = st.text_input(f"Edit value for {key}", value=st.session_state.cleaned_form.get(key, ""), key=f"edit_{i}")
+            new_value = st.text_input(f"Modifier la valeur pour {key}", value=st.session_state.cleaned_form.get(key, ""), key=f"edit_{i}")
             
             with col3:
-                if st.button("Apply", key=f"apply_{i}"):
+                if st.button("Appliquer", key=f"apply_{i}"):
                     # Update the cleaned form in session state
                     st.session_state.cleaned_form[key] = new_value
                     # Remove this issue from the list
                     st.session_state.issues.pop(i)
-                    st.success(f"Changes applied for {key}")
+                    st.success(f"Modifications appliquées pour {key}")
                     st.rerun()
     else:
         st.session_state.pipeline_stage = 'generate_pdf'
 
 if st.session_state.pipeline_stage == 'generate_pdf':
-    st.header("Generate PDF from Cleaned Form")
+    st.header("Générer le PDF à partir du Formulaire")
     logger.log_text("Starting PDF generation", severity='INFO')
     try:
-        data_dict = st.session_state.cleaned_form
-        input_pdf_path = "docs/form.pdf"
-        pdfbytes = fill_and_flatten_pdf(input_pdf_path, data_dict)
-        st.success("PDF generated successfully!")
-        logger.log_text("PDF generated successfully", severity='INFO')
+        pdf_file_path = "docs/Form_Completed.pdf"
+        with open(pdf_file_path, "rb") as f:
+            pdfbytes = f.read()
         
-        # Add download button for the generated PDF
+        st.success("PDF chargé avec succès !")
+        logger.log_text("PDF loaded successfully", severity='INFO')
+        
+        # Bouton de téléchargement pour le fichier PDF chargé
         btn = st.download_button(
-                    label="Download PDF",
-                    data=pdfbytes,  # Utiliser pdfbytes directement
-                    file_name="filled_form.pdf",
+                    label="Télécharger le PDF",
+                    data=pdfbytes,
+                    file_name="form complete.pdf",
                     mime="application/pdf"
                 )
         
         st.session_state.pipeline_stage = 'salesforce_integration'
     except Exception as e:
-        error_msg = f"An error occurred while generating the PDF: {str(e)}"
+        error_msg = f"Une erreur s'est produite lors de la génération du PDF: {str(e)}"
         st.error(error_msg)
         logger.log_text(error_msg, severity='ERROR')
 
 if st.session_state.pipeline_stage == 'salesforce_integration':
-    st.header("Salesforce Integration")
+    st.header("Intégration Salesforce")
     logger.log_text("Starting Salesforce integration", severity='INFO')
-    try:
-        access_token = request_access_token_using_refresh_token(salesforce_credentials['refresh_token'])
-        st.session_state['access_token'] = access_token
-        logger.log_text("Salesforce access token obtained", severity='INFO')
-        
-        anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-        with open("docs/prompt_summary.txt", "r", encoding="utf-8") as file:
-            prompt_summary = file.read()
-        summary_prompt = prompt_summary.format(transcript=st.session_state.conversation)
-        
-        response = anthropic_client.messages.create(
-            model="claude-3-5-sonnet-20240620",
-            max_tokens=8192,
-            messages=[
-                {"role": "user", "content": summary_prompt}
-            ]
-        )
-        st.session_state.generated_text_summary = response.content[0].text
-        logger.log_text(f"Generated summary: {st.session_state.generated_text_summary}", severity='DEBUG')
-        st.success("AI summary generated successfully!")
-        logger.log_text("AI summary generated successfully", severity='INFO')
-        
-        account_id = create_account(access_token, salesforce_credentials['instance_url'])
-        logger.log_text(f"Salesforce account created. ID: {account_id}", severity='INFO')
-        opportunity_id = create_opportunity(access_token, account_id, salesforce_credentials['instance_url'])
-        logger.log_text(f"Salesforce opportunity created. ID: {opportunity_id}", severity='INFO')
-        add_note_to_account(access_token, account_id, salesforce_credentials['instance_url'])
-        upload_file_to_account(access_token,pdfbytes, account_id, salesforce_credentials['instance_url'])
-        
-        st.success("Data sent to Salesforce successfully!")
-        st.session_state.pipeline_stage = 'complete'
-    except Exception as e:
-        st.error(f"An error occurred during Salesforce integration: {str(e)}")
+    
+    # Button 1: Connect to Salesforce
+    if st.button("Se connecter à Salesforce"):
+        try:
+            access_token = request_access_token_using_refresh_token(salesforce_credentials['refresh_token'])
+            st.session_state['access_token'] = access_token
+            logger.log_text("Salesforce access token obtained", severity='INFO')
+            st.success("Connecté à Salesforce avec succès!")
+        except Exception as e:
+            st.error(f"Une erreur s'est produite lors de la connexion à Salesforce: {str(e)}")
+    
+    # Button 2: Générer le résumé de l'appel
+    if st.button("Générer le résumé de l'appel"):
+        try:
+            time.sleep(1.5)
+            with open("docs/ai_summary.txt", "r", encoding="utf-8") as file:
+                generated_text_summary = file.read()
+            st.session_state.generated_text_summary = generated_text_summary
+            logger.log_text(f"Generated summary: {generated_text_summary}", severity='DEBUG')
+            st.success("Résumé IA généré avec succès!")
+            st.text_area("Contenu:", value=generated_text_summary, height=300, disabled=False)
+            st.download_button(
+                label="Télécharger le Résumé",
+                data=generated_text_summary.encode("utf-8"),
+                file_name="summary.txt",
+                mime="text/plain"
+            )
+        except Exception as e:
+            st.error(f"Une erreur s'est produite lors de la génération du résumé: {str(e)}")
+    
+    # Button 3: Send Data to Salesforce
+    if st.button("Envoyer les données à Salesforce"):
+        if 'access_token' not in st.session_state:
+            st.error("Veuillez d'abord vous connecter à Salesforce.")
+        elif 'generated_text_summary' not in st.session_state:
+            st.error("Veuillez d'abord générer le résumé de l'appel.")
+        else:
+            try:
+                access_token = st.session_state['access_token']
+                # Create Account
+                account_id = create_account(access_token, salesforce_credentials['instance_url'])
+                logger.log_text("Salesforce account created.", severity='INFO')
+                
+                # Create Opportunities
+                opportunity_ids = create_opportunities(access_token, account_id, salesforce_credentials['instance_url'])
+                logger.log_text("Salesforce opportunities created.", severity='INFO')
+    
+                # Add note and upload file (pdfbytes should be defined/available from a previous pipeline stage)
+                add_note_to_account(access_token, account_id, salesforce_credentials['instance_url'])
+                upload_file_to_account(access_token,"docs/Form_Completed.pdf", account_id, salesforce_credentials['instance_url'])
+    
+                st.success("Données envoyées à Salesforce avec succès!")
+                st.session_state.pipeline_stage = 'complete'
+            except Exception as e:
+                st.error(f"Une erreur s'est produite lors de l'intégration Salesforce: {str(e)}")
+
 
 if st.session_state.pipeline_stage == 'complete':
-        st.success("Pipeline completed successfully!")
-        if st.button("Start New Pipeline"):
+        st.success("Pipeline terminé avec succès!")
+        if st.button("Démarrer un Nouveau Pipeline"):
             # Clear all keys from session state
             for key in list(st.session_state.keys()):
                 del st.session_state[key]

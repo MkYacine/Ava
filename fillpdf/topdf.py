@@ -10,7 +10,7 @@ def fill_and_flatten_pdf(input_pdf_path, data_dict):
     
     # Itérer sur chaque page
     for page_number, page in enumerate(template_pdf.pages, start=1):
-        print(f"Processing page {page_number}")
+        #print(f"Processing page {page_number}")
         # Dimensions de la page
         media_box = page.MediaBox
         page_width = float(media_box[2]) - float(media_box[0])
