@@ -217,6 +217,7 @@ if st.session_state.pipeline_stage == 'process_recording':
     while attempt < max_attempts:
         recordings = twilio_client.recordings.list(call_sid=st.session_state.call_sid, limit=1)
         if recordings:
+            time.sleep(2)
             selected_recording = recordings[0]
             st.write(f"Traitement de l'enregistrement SID: {selected_recording.sid}")
             logger.log_text(f"Processing recording SID: {selected_recording.sid}", severity='INFO')
