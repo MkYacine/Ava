@@ -1,18 +1,12 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 import streamlit as st
 from transcribe.transcribe import *
 from salesforce.salesforce_helpers import *
 from google.oauth2 import service_account
 from twiliohelpers.twilio_handlers import twilio_client
 from gcs.gcs_handlers import get_latest_gcs_files, process_and_upload_audio
-from utils import check_password, extract_form_with_confidence, extract_form_without_confidence
-import os
+from utils import extract_form_with_confidence, extract_form_without_confidence
 import requests
 from requests.auth import HTTPBasicAuth
-from anthropic import Anthropic
-from fillpdf.topdf import fill_and_flatten_pdf
 from transcribe.validate import validate_form
 import re
 from pydub import AudioSegment
@@ -20,31 +14,31 @@ import time
 import uuid
 from google.cloud import logging as cloud_logging
 
-# Configuration des credentials Google Cloud
+# Configuration des credentials Google Cloud using st.secrets
 credentials_dict = {
-    "type": os.getenv("GOOGLE_TYPE"),
-    "project_id": os.getenv("GOOGLE_PROJECT_ID"),
-    "private_key_id": os.getenv("GOOGLE_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("GOOGLE_PRIVATE_KEY").replace('\\n', '\n'),
-    "client_email": os.getenv("GOOGLE_CLIENT_EMAIL"),
-    "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-    "auth_uri": os.getenv("GOOGLE_AUTH_URI"),
-    "token_uri": os.getenv("GOOGLE_TOKEN_URI"),
-    "auth_provider_x509_cert_url": os.getenv("GOOGLE_AUTH_PROVIDER_X509_CERT_URL"),
-    "client_x509_cert_url": os.getenv("GOOGLE_CLIENT_X509_CERT_URL")
+    "type": st.secrets["GOOGLE_TYPE"],
+    "project_id": st.secrets["GOOGLE_PROJECT_ID"],
+    "private_key_id": st.secrets["GOOGLE_PRIVATE_KEY_ID"],
+    "private_key": st.secrets["GOOGLE_PRIVATE_KEY"].replace('\\n', '\n'),
+    "client_email": st.secrets["GOOGLE_CLIENT_EMAIL"],
+    "client_id": st.secrets["GOOGLE_CLIENT_ID"],
+    "auth_uri": st.secrets["GOOGLE_AUTH_URI"],
+    "token_uri": st.secrets["GOOGLE_TOKEN_URI"],
+    "auth_provider_x509_cert_url": st.secrets["GOOGLE_AUTH_PROVIDER_X509_CERT_URL"],
+    "client_x509_cert_url": st.secrets["GOOGLE_CLIENT_X509_CERT_URL"]
 }
 
 credentials = service_account.Credentials.from_service_account_info(credentials_dict)
 
 salesforce_credentials = {
-    "client_id": os.getenv("SF_CLIENT_ID"),
-    "client_secret": os.getenv("SF_CLIENT_SECRET"),
-    "redirect_uri": os.getenv("SF_REDIRECT_URI"),
-    "auth_url": os.getenv("SF_AUTH_URL"),
-    "token_url": os.getenv("SF_TOKEN_URL"),
-    "security_token": os.getenv("SF_SECURITY_TOKEN"),
-    "instance_url": os.getenv("SF_INSTANCE_URL"),
-    "refresh_token": os.getenv("SF_REFRESH_TOKEN")
+    "client_id": st.secrets["SF_CLIENT_ID"],
+    "client_secret": st.secrets["SF_CLIENT_SECRET"],
+    "redirect_uri": st.secrets["SF_REDIRECT_URI"],
+    "auth_url": st.secrets["SF_AUTH_URL"],
+    "token_url": st.secrets["SF_TOKEN_URL"],
+    "security_token": st.secrets["SF_SECURITY_TOKEN"],
+    "instance_url": st.secrets["SF_INSTANCE_URL"],
+    "refresh_token": st.secrets["SF_REFRESH_TOKEN"]
 }
 
 # Set up Google Cloud Logging
@@ -76,7 +70,6 @@ def load_preset_files():
         generated_text = f.read()
     st.session_state.conf_form = extract_form_with_confidence(generated_text)
     st.session_state.cleaned_form = extract_form_without_confidence(st.session_state.conf_form)
-    print(st.session_state.cleaned_form)
 
 def initialize_session_state():
     if 'pipeline_id' not in st.session_state:
@@ -179,7 +172,7 @@ if st.session_state.pipeline_stage == 'start':
     if st.button("Démarrer la Pipeline"):
         if forward_number and to_number:
             try:
-                response = requests.post(f"{os.getenv('NGROK_URL')}/make_call", 
+                response = requests.post(f"{st.secrets['NGROK_URL']}/make_call", 
                                             json={"forward_number": forward_number, "to_number": to_number})
                 if response.status_code == 200:
                     call_data = response.json()
@@ -228,8 +221,8 @@ if st.session_state.pipeline_stage == 'process_recording':
             st.write(f"Traitement de l'enregistrement SID: {selected_recording.sid}")
             logger.log_text(f"Processing recording SID: {selected_recording.sid}", severity='INFO')
             
-            stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{os.getenv('TWILIO_ACCOUNT_SID')}/Recordings/{selected_recording.sid}.wav?RequestedChannels=2"
-            response = requests.get(stereo_url, auth=HTTPBasicAuth(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN')))
+            stereo_url = f"https://api.twilio.com/2010-04-01/Accounts/{st.secrets['TWILIO_ACCOUNT_SID']}/Recordings/{selected_recording.sid}.wav?RequestedChannels=2"
+            response = requests.get(stereo_url, auth=HTTPBasicAuth(st.secrets['TWILIO_ACCOUNT_SID'], st.secrets['TWILIO_AUTH_TOKEN']))
             
             if response.status_code == 200:
                 bucket_name = "excalibur-testing"

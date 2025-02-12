@@ -16,7 +16,6 @@ salesforce_credentials = {
     }
 
 
-print(salesforce_credentials)
 
 def request_access_token_using_refresh_token(refresh_token):
     token_data = {
@@ -29,7 +28,6 @@ def request_access_token_using_refresh_token(refresh_token):
     if response.status_code == 200:
         token_json = response.json()
         access_token = token_json.get('access_token')
-        print(access_token)
         return access_token
     else:
         st.error("Erreur lors de la récupération du token d'accès.")
